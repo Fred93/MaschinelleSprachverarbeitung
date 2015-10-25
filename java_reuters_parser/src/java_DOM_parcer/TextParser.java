@@ -33,28 +33,42 @@ public class TextParser {
 	private static String directory;
 	private static File xmlfile;
 	
-
+	
+	private static int TotalNumberofFiles;
+	private static int TotalNumberofDocs;
 
 	
 	 public static void main(String[] args) {
 		   
 			directory = "reuters21578";
 			
-			File dir = new File("reuters21578");
+			File dir = new File(directory);
 			File[] files = dir.listFiles(new FilenameFilter() {
 				public boolean accept(File dir, String name) {
 					return name.toLowerCase().endsWith(".sgm");
 				}
 			});
-			for (File file:files){
+			
+			TotalNumberofFiles=files.length;
+			
+			/*for (File file:files){
 				System.out.println(file);
-			}
+			}*/
 			loadSGMFiles(files);
 			
 			parseXML(xmlfile);
+			
+			printProperties();
 }
-	 private static void parseXML(File XMLfile) {
-		// TODO Auto-generated methodstub
+	 private static void printProperties() {
+		// TODO Auto-generated method stub
+		 System.out.println("Total number of Files : "+TotalNumberofFiles);
+		 System.out.println("Total number of Documents: " + TotalNumberofDocs);
+		 
+		
+	}
+	private static void parseXML(File XMLfile) {
+	
 		 
 		 DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 		   
@@ -65,15 +79,8 @@ public class TextParser {
 		   DocumentBuilder builder = dbFactory.newDocumentBuilder();
 		   Document doc = builder.parse(XMLfile);
 		   
-		   NodeList list = doc.getElementsByTagName("DATE");
-		   
-		   for (int i = 0; i < list.getLength(); i++) {
-	       Node p = list.item(i);
-	       
-	       
-	    	   System.out.println(p.getTextContent());
-	       }
-			
+		   NodeList docs = doc.getElementsByTagName("REUTERS");
+		   TotalNumberofDocs = docs.getLength();
 			                
 			   
 		   }
