@@ -3,17 +3,13 @@ package java_DOM_parcer;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-
 import javax.xml.parsers.ParserConfigurationException;
-
 import javax.xml.parsers.SAXParserFactory;
 
 import org.w3c.dom.Document;
-
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
-
 
 import java.io.BufferedWriter;
 import java.io.BufferedReader;
@@ -21,8 +17,8 @@ import java.io.FileReader;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.FilenameFilter;
-
 import java.io.IOException;
+import java.util.StringTokenizer;
 
 
 
@@ -36,6 +32,8 @@ public class TextParser {
 	
 	private static int TotalNumberofFiles;
 	private static int TotalNumberofDocs;
+	private static int TotalNumberofTokenTextTitle;
+	private static int TotalNumberofTokenTextBody;
 
 	
 	 public static void main(String[] args) {
@@ -64,7 +62,9 @@ public class TextParser {
 		// TODO Auto-generated method stub
 		 System.out.println("Total number of Files : "+TotalNumberofFiles);
 		 System.out.println("Total number of Documents: " + TotalNumberofDocs);
-		 
+		 System.out.println("Total Number of Tokens of TEXT/TITLE: " + TotalNumberofTokenTextTitle);
+		 System.out.println("Total Number of Tokens of TEXT/BODY: " + TotalNumberofTokenTextBody);
+			
 		
 	}
 	private static void parseXML(File XMLfile) {
@@ -81,7 +81,32 @@ public class TextParser {
 		   
 		   NodeList docs = doc.getElementsByTagName("REUTERS");
 		   TotalNumberofDocs = docs.getLength();
-			                
+		   
+		   NodeList texts = doc.getElementsByTagName("TITLE");
+		   NodeList bodies = doc.getElementsByTagName("BODY");
+		   TotalNumberofTokenTextTitle=0;
+		   TotalNumberofTokenTextBody=0;
+		   
+		   for (int i = 0; i < texts.getLength(); i++) {
+	       Node p = texts.item(i);
+      if (p.getParentNode().getNodeName()=="TEXT"){
+    	  
+    	  StringTokenizer st = new StringTokenizer(p.getTextContent());
+    	  TotalNumberofTokenTextTitle=TotalNumberofTokenTextTitle+ st.countTokens();
+    	  
+      } 
+	       }
+		   
+		   for (int j = 0; j < bodies.getLength(); j++) {
+		       Node p = bodies.item(j);
+	      if (p.getParentNode().getNodeName()=="TEXT"){
+	    	  
+	    	  StringTokenizer st = new StringTokenizer(p.getTextContent());
+	    	  TotalNumberofTokenTextBody=TotalNumberofTokenTextBody+ st.countTokens();
+	    	  
+	      } 
+		       }
+		   
 			   
 		   }
 		   catch (ParserConfigurationException e)
