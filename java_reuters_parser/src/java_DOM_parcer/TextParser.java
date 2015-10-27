@@ -52,6 +52,7 @@ public class TextParser {
 			/*for (File file:files){
 				System.out.println(file);
 			}*/
+			
 			loadSGMFiles(files);
 			
 			parseXML(xmlfile);
