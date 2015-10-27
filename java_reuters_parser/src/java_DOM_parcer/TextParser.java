@@ -43,7 +43,7 @@ public class TextParser {
 			File dir = new File(directory);
 			File[] files = dir.listFiles(new FilenameFilter() {
 				public boolean accept(File dir, String name) {
-					return name.toLowerCase().endsWith(".sgm");
+					return (name.toLowerCase().endsWith(".sgm") & !name.contains("017"));
 				}
 			});
 			
