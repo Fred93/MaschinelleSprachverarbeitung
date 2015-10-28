@@ -21,6 +21,8 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.StringTokenizer;
 
 
@@ -38,6 +40,7 @@ public class TaskManager {
 	private int totalAmountTokenTitle;
 	private int totalAmountTokenBody;
 	private File[] files;
+	private HashMap<String, Integer> allTokensBody = new HashMap<>();
 
 	public TaskManager(String directory){
 		this.directory = directory;
@@ -55,6 +58,8 @@ public class TaskManager {
 		while(!executor.isTerminated()){
 		}
 		printProperties();
+		Map<String, Integer> sortedMap = HashMapSorter.sortByComparator(allTokensBody);
+		System.out.println(sortedMap);
 	}
 
 	public void readFiles(){
@@ -63,8 +68,8 @@ public class TaskManager {
 			public boolean accept(File dir, String name) {
 				//
 				
-				//return (name.toLowerCase().endsWith(".sgm") & !name.contains("017"));
-				return (name.toLowerCase().endsWith(".sgm") & name.contains("000"));
+				return (name.toLowerCase().endsWith(".sgm") & !name.contains("017"));
+				//return (name.toLowerCase().endsWith(".sgm") & name.contains("000"));
 			}
 		});
 	}
@@ -86,5 +91,12 @@ public class TaskManager {
 		directory = "reuters21578";	
 		TaskManager tp = new TaskManager(directory);
 		tp.startAnalyzing();
+	}
+
+	public void addTokenMap(HashMap<String, Integer> tokens, int type) {
+		if (type == XMLParser.BODY){
+			tokens.forEach((k,v)->allTokensBody.merge(k, v, (v1,v2) -> (v1+v2)));
+		}
+		
 	}
 }
