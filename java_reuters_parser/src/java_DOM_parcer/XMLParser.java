@@ -6,7 +6,16 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.Map;
 import java.util.StringTokenizer;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -19,11 +28,15 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 public class XMLParser implements Runnable {
+
+	public final static int BODY = 1;
+	public final static int TITLE = 2;
 	private File f;
 	private TaskManager manager;
 	private int amountDocs;
 	private int amountTokenBody = 0;
 	private int amountTokenTitle = 0;
+	private HashMap<String, Integer> allTokensBody = new HashMap<>();
 	
 	public XMLParser(TaskManager manager, File f) {
 		this.f = f;
@@ -46,8 +59,11 @@ public class XMLParser implements Runnable {
 			NodeList titles = doc.getElementsByTagName("TITLE");
 			NodeList bodies = doc.getElementsByTagName("BODY");
 		   
-			amountTokenBody = getAmountToken(bodies);
-			amountTokenTitle = getAmountToken(titles);
+			amountTokenBody = analyzeToken(bodies, this.BODY);
+			//amountTokenTitle = analyzeToken(titles);
+			
+			Map<String, Integer> sortedMap = sortByComparator(allTokensBody);
+			System.out.println(sortedMap);
 			
 			manager.addValues(amountDocs, amountTokenBody, amountTokenTitle);
 		} catch (ParserConfigurationException | SAXException | IOException e) {
@@ -56,17 +72,20 @@ public class XMLParser implements Runnable {
 		}
 	}
 	
-	public int getAmountToken(NodeList nodeList){
-		int ctr=0;
-		//for (int i = 0; i < nodeList.getLength(); i++) {
-		for (int i = 0; i < 1; i++) {
+	public int analyzeToken(NodeList nodeList, int type){
+		int ctr = 0;
+		ExecutorService executor = Executors.newFixedThreadPool(4);
+		for (int i = 0; i < nodeList.getLength(); i++) {
 			Node p = nodeList.item(i);
 			if (p.getParentNode().getNodeName()=="TEXT"){
 				StringTokenizer st = new StringTokenizer(p.getTextContent());
 				ctr=ctr+ st.countTokens();
-				TokenAnalyzer worker = new TokenAnalyzer(st);
-				(new Thread(worker)).start();
+				Runnable worker = new TokenAnalyzer(this, st, type);
+				executor.execute(worker);
 		     } 
+		}
+		executor.shutdown();
+		while(!executor.isTerminated()){
 		}
 		return ctr;
 	}
@@ -119,6 +138,35 @@ public class XMLParser implements Runnable {
 		
 		}
 		return xmlFile;
+	}
+
+	public void passTokens(HashMap<String, Integer> tokens, int type) {
+		if (type == this.BODY){
+			tokens.forEach((k,v)->allTokensBody.merge(k, v, (v1,v2) -> (v1+v2)));
+		}
+		
+	}
+	
+	private static Map<String, Integer> sortByComparator(Map<String, Integer> unsortMap) {
+
+		// Convert Map to List
+		LinkedList<Map.Entry<String, Integer>> list = new LinkedList<Map.Entry<String, Integer>>(unsortMap.entrySet());
+
+		// Sort list with comparator, to compare the Map values
+		Collections.sort(list, new Comparator<Map.Entry<String, Integer>>() {
+			public int compare(Map.Entry<String, Integer> o1,
+                                           Map.Entry<String, Integer> o2) {
+				return (o2.getValue()).compareTo(o1.getValue());
+			}
+		});
+
+		// Convert sorted map back to a Map
+		Map<String, Integer> sortedMap = new LinkedHashMap<String, Integer>();
+		for (Iterator<Map.Entry<String, Integer>> it = list.iterator(); it.hasNext();) {
+			Map.Entry<String, Integer> entry = it.next();
+			sortedMap.put(entry.getKey(), entry.getValue());
+		}
+		return sortedMap;
 	}
 
 }
