@@ -9,10 +9,12 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -38,6 +40,13 @@ public class XMLParser implements Runnable {
 	private int amountTokenTitle = 0;
 	private HashMap<String, Integer> allTokensBody = new HashMap<>();
 	
+	private int Topic;
+
+	private int Places;
+
+	private int People;
+	
+
 	public XMLParser(TaskManager manager, File f) {
 		this.f = f;
 		this.manager = manager;
@@ -53,35 +62,60 @@ public class XMLParser implements Runnable {
 			builder = dbFactory.newDocumentBuilder();
 			Document doc = builder.parse(xmlFile);
 			   
-			NodeList docs = doc.getElementsByTagName("REUTERS");
-			amountDocs = docs.getLength();
 		   
 			NodeList titles = doc.getElementsByTagName("TITLE");
 			NodeList bodies = doc.getElementsByTagName("BODY");
 		   
-			amountTokenBody = analyzeToken(bodies, this.BODY);
-			//amountTokenTitle = analyzeToken(titles);
+			amountTokenBody = analyzeToken(bodies, this.BODY, "TEXT");
+			amountTokenTitle = analyzeToken(titles, this.TITLE, "TEXT");
+			NodeList docs = doc.getElementsByTagName("REUTERS");
+			amountDocs = docs.getLength();
+			
+			
+			
+			//zählt auch distinct
+			Topic = EntitiesCounter(doc, "TOPICS");
+			Places = EntitiesCounter(doc, "PLACES");
+			People = EntitiesCounter(doc, "PEOPLE");
 			
 			//Map<String, Integer> sortedMap = HashMapSorter.sortByComparator(allTokensBody);
 			//System.out.println(sortedMap);
 			manager.addTokenMap(allTokensBody, this.BODY);
-			manager.addValues(amountDocs, amountTokenBody, amountTokenTitle);
+			
+			
+			
+			manager.addValues(amountDocs, amountTokenBody, amountTokenTitle, Topic, Places, People);
 		} catch (ParserConfigurationException | SAXException | IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 	
-	public int analyzeToken(NodeList nodeList, int type){
+	public int analyzeToken(NodeList nodeList, int type, String parent){
 		int ctr = 0;
+		
 		ExecutorService executor = Executors.newFixedThreadPool(4);
+		
 		for (int i = 0; i < nodeList.getLength(); i++) {
+			
 			Node p = nodeList.item(i);
-			if (p.getParentNode().getNodeName()=="TEXT"){
+			
+			if (p.getParentNode().getNodeName()==parent){
+				
+				
+				
+				
+				String TextContent = p.getTextContent().toLowerCase();
+				p.setTextContent(TextContent);
 				StringTokenizer st = new StringTokenizer(p.getTextContent());
 				ctr=ctr+ st.countTokens();
+				
+				if (type==1){
 				Runnable worker = new TokenAnalyzer(this, st, type);
 				executor.execute(worker);
+				}
+				
+				
 		     } 
 		}
 		executor.shutdown();
@@ -89,6 +123,37 @@ public class XMLParser implements Runnable {
 		}
 		return ctr;
 	}
+	
+	public int EntitiesCounter(Document doc, String type){
+		int count=0;
+		NodeList list = doc.getElementsByTagName(type);
+		Set<String> distinctSet = new HashSet<String>();
+		for (int i=0; i<list.getLength(); i++){
+			
+			if (list.item(i).hasChildNodes()){
+				
+			  NodeList listChildren= list.item(i).getChildNodes();
+			  
+			  count +=listChildren.getLength();
+			  for (int b=0; b<listChildren.getLength(); b++){
+				  
+					//System.out.println(listChildren.item(b).getTextContent());
+					
+					distinctSet.add(listChildren.item(b).getTextContent());
+			  }
+			  
+			}
+			
+			
+		}
+		
+		manager.mergeSets(distinctSet,type);
+		//  System.out.println(distinctSet.size());
+		
+		return count;
+	}
+	
+	
 	
 	public File convertToXML(File f){
 		SAXParserFactory factory = SAXParserFactory.newInstance();
@@ -142,6 +207,7 @@ public class XMLParser implements Runnable {
 
 	public void passTokens(HashMap<String, Integer> tokens, int type) {
 		if (type == this.BODY){
+		
 			tokens.forEach((k,v)->allTokensBody.merge(k, v, (v1,v2) -> (v1+v2)));
 		}
 		

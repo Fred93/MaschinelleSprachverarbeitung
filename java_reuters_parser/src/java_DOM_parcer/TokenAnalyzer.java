@@ -25,7 +25,6 @@ public class TokenAnalyzer implements Runnable {
 	public void run() {
 		while (st.hasMoreTokens()) {
 			String s = st.nextToken();
-			s = s.toLowerCase();
 			if(tokens.containsKey(s)){
 				tokens.put(s, tokens.get(s) +1);
 			}else{
@@ -33,8 +32,10 @@ public class TokenAnalyzer implements Runnable {
 			}
 		}
 		//System.out.println(tokens);
+		//System.out.println("      ");
 		Map<String, Integer> sortedMap = sortByComparator(tokens);
 		//System.out.println(sortedMap);
+		//System.out.println("      ");
 		parser.passTokens(tokens, type);
 
 	}

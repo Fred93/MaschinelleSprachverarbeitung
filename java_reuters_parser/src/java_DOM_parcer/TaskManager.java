@@ -22,7 +22,9 @@ import java.io.FileWriter;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.StringTokenizer;
 
 
@@ -39,8 +41,20 @@ public class TaskManager {
 	private int totalAmountDocs;
 	private int totalAmountTokenTitle;
 	private int totalAmountTokenBody;
+	
+	private int Topic;
+	private int TopicDistinct;
+	private int Places;
+	private int PlacesDistinct;
+	private int People;
+	private int PeopleDistinct;
+	
+	
 	private File[] files;
 	private HashMap<String, Integer> allTokensBody = new HashMap<>();
+	private Set<String> distinctTopics = new HashSet<String>();
+	private Set<String> distinctPeople = new HashSet<String>();
+	private Set<String> distinctPlaces = new HashSet<String>();
 
 	public TaskManager(String directory){
 		this.directory = directory;
@@ -59,7 +73,7 @@ public class TaskManager {
 		}
 		printProperties();
 		Map<String, Integer> sortedMap = HashMapSorter.sortByComparator(allTokensBody);
-		System.out.println(sortedMap);
+		//System.out.println(sortedMap);
 	}
 
 	public void readFiles(){
@@ -79,12 +93,28 @@ public class TaskManager {
 		 System.out.println("Total number of Documents: " + totalAmountDocs);
 		 System.out.println("Total Number of Tokens of TEXT/TITLE: " + totalAmountTokenTitle);
 		 System.out.println("Total Number of Tokens of TEXT/BODY: " + totalAmountTokenBody);	
+		 System.out.println("Total Number of Tokens of topics: " + Topic);
+		 System.out.println("Total Number of Tokens of topics distinct: " + distinctTopics.size());
+		 System.out.println("Total Number of Tokens of places: " + Places);
+		 System.out.println("Total Number of Tokens of places distinct: " + distinctPlaces.size());
+		 System.out.println("Total Number of Tokens of people: " + People);
+		 System.out.println("Total Number of Tokens of people distinct: " + distinctPeople.size());
 	}
 	
-	public void addValues(int amountDocs, int amountTokenBody, int amountTokenTitle){
+	public void addValues(int amountDocs, int amountTokenBody, int amountTokenTitle,
+	int Topic, int Places,	int People){
 		this.totalAmountDocs += amountDocs;
 		this.totalAmountTokenBody += amountTokenBody;
 		this.totalAmountTokenTitle += amountTokenTitle;
+		
+		this.Topic +=  Topic;
+	
+		this.Places += Places;
+	
+		this.People += People;
+	
+		
+		
 	}
 	 
 	public static void main(String[] args) {
@@ -99,4 +129,17 @@ public class TaskManager {
 		}
 		
 	}
+	public void mergeSets(Set<String> distinctValues, String type){
+		if (type=="TOPICS"){
+		//System.out.println(distinctValues.size());
+		distinctTopics.addAll(distinctValues);
+		//System.out.println(distinctTopics.size());
+		}else if (type =="PEOPLE"){
+			distinctPeople.addAll(distinctValues);
+		}else if(type=="PLACES"){
+			distinctPlaces.addAll(distinctValues);
+		}
+	}
+	
+	
 }
