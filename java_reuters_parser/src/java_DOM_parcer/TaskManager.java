@@ -3,29 +3,15 @@ package java_DOM_parcer;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParserFactory;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
-
-import java.io.BufferedWriter;
-import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.File;
-import java.io.FileWriter;
+
 import java.io.FilenameFilter;
-import java.io.IOException;
+
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.StringTokenizer;
+
 
 
 
@@ -34,7 +20,7 @@ public class TaskManager {
 	
 	
 	private static String directory;
-	private static File xmlfile;
+
 	
 	
 	private int totalNumberofFiles;
@@ -43,11 +29,11 @@ public class TaskManager {
 	private int totalAmountTokenBody;
 	
 	private int Topic;
-	private int TopicDistinct;
+
 	private int Places;
-	private int PlacesDistinct;
+	
 	private int People;
-	private int PeopleDistinct;
+	
 	
 	
 	private File[] files;
@@ -56,14 +42,14 @@ public class TaskManager {
 	private Set<String> distinctPeople = new HashSet<String>();
 	private Set<String> distinctPlaces = new HashSet<String>();
 
-	public TaskManager(String directory){
-		this.directory = directory;
+	public TaskManager(String dirrectory){
+		dirrectory = directory;
 		readFiles();
 		totalNumberofFiles=files.length;
 	}
 	
 	private void startAnalyzing() {
-		ExecutorService executor = Executors.newFixedThreadPool(4);
+		ExecutorService executor = Executors.newFixedThreadPool(21);
 		for (int i = 0; i < files.length; i++) {
 			Runnable worker = new XMLParser(this, files[i]);
 			executor.execute(worker);
@@ -93,12 +79,12 @@ public class TaskManager {
 		 System.out.println("Total number of Documents: " + totalAmountDocs);
 		 System.out.println("Total Number of Tokens of TEXT/TITLE: " + totalAmountTokenTitle);
 		 System.out.println("Total Number of Tokens of TEXT/BODY: " + totalAmountTokenBody);	
-		 System.out.println("Total Number of Tokens of topics: " + Topic);
-		 System.out.println("Total Number of Tokens of topics distinct: " + distinctTopics.size());
-		 System.out.println("Total Number of Tokens of places: " + Places);
-		 System.out.println("Total Number of Tokens of places distinct: " + distinctPlaces.size());
-		 System.out.println("Total Number of Tokens of people: " + People);
-		 System.out.println("Total Number of Tokens of people distinct: " + distinctPeople.size());
+		 System.out.println("Total Number of entities of topics: " + Topic);
+		 System.out.println("Total Number of entities of topics distinct: " + distinctTopics.size());
+		 System.out.println("Total Number of entities of places: " + Places);
+		 System.out.println("Total Number of entities of places distinct: " + distinctPlaces.size());
+		 System.out.println("Total Number of entities of people: " + People);
+		 System.out.println("Total Number of entities of people distinct: " + distinctPeople.size());
 	}
 	
 	public void addValues(int amountDocs, int amountTokenBody, int amountTokenTitle,

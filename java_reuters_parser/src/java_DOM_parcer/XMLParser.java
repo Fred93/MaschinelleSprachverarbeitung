@@ -6,14 +6,10 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Collections;
-import java.util.Comparator;
+
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.Map;
+
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.concurrent.ExecutorService;
@@ -66,8 +62,8 @@ public class XMLParser implements Runnable {
 			NodeList titles = doc.getElementsByTagName("TITLE");
 			NodeList bodies = doc.getElementsByTagName("BODY");
 		   
-			amountTokenBody = analyzeToken(bodies, this.BODY, "TEXT");
-			amountTokenTitle = analyzeToken(titles, this.TITLE, "TEXT");
+			amountTokenBody = analyzeToken(bodies, BODY, "TEXT");
+			amountTokenTitle = analyzeToken(titles, TITLE, "TEXT");
 			NodeList docs = doc.getElementsByTagName("REUTERS");
 			amountDocs = docs.getLength();
 			
@@ -80,7 +76,7 @@ public class XMLParser implements Runnable {
 			
 			//Map<String, Integer> sortedMap = HashMapSorter.sortByComparator(allTokensBody);
 			//System.out.println(sortedMap);
-			manager.addTokenMap(allTokensBody, this.BODY);
+			manager.addTokenMap(allTokensBody, BODY);
 			
 			
 			
@@ -206,7 +202,7 @@ public class XMLParser implements Runnable {
 	}
 
 	public void passTokens(HashMap<String, Integer> tokens, int type) {
-		if (type == this.BODY){
+		if (type == BODY){
 		
 			tokens.forEach((k,v)->allTokensBody.merge(k, v, (v1,v2) -> (v1+v2)));
 		}
