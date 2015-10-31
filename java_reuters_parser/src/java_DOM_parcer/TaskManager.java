@@ -10,6 +10,7 @@ import java.io.FilenameFilter;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 
@@ -57,8 +58,10 @@ public class TaskManager {
 		executor.shutdown();
 		while(!executor.isTerminated()){
 		}
+	
+		allTokensBody = HashMapSorter.sortByComparator(allTokensBody);
+		
 		printProperties();
-		Map<String, Integer> sortedMap = HashMapSorter.sortByComparator(allTokensBody);
 		//System.out.println(sortedMap);
 	}
 
@@ -68,8 +71,8 @@ public class TaskManager {
 			public boolean accept(File dir, String name) {
 				//
 				
-				return (name.toLowerCase().endsWith(".sgm") & !name.contains("017"));
-				//return (name.toLowerCase().endsWith(".sgm") & name.contains("000"));
+				//return (name.toLowerCase().endsWith(".sgm") & !name.contains("017"));
+				return (name.toLowerCase().endsWith(".sgm") & name.contains("000"));
 			}
 		});
 	}
@@ -85,6 +88,22 @@ public class TaskManager {
 		 System.out.println("Total Number of entities of places distinct: " + distinctPlaces.size());
 		 System.out.println("Total Number of entities of people: " + People);
 		 System.out.println("Total Number of entities of people distinct: " + distinctPeople.size());
+		 
+		 
+		 System.out.println("Top 100 tokens: ");
+		 int tokensprinted =0;
+		 for(Entry<String, Integer> entry : allTokensBody.entrySet()) {
+			 tokensprinted++;
+			    String key = entry.getKey();
+			    int value = entry.getValue();
+			    System.out.print(key + ": "+ value +  " ");
+           if (tokensprinted==100){
+          	break;
+}
+			    
+			}
+		 
+		 
 	}
 	
 	public void addValues(int amountDocs, int amountTokenBody, int amountTokenTitle,
@@ -112,6 +131,8 @@ public class TaskManager {
 	public void addTokenMap(HashMap<String, Integer> tokens, int type) {
 		if (type == XMLParser.BODY){
 			tokens.forEach((k,v)->allTokensBody.merge(k, v, (v1,v2) -> (v1+v2)));
+			
+			
 		}
 		
 	}

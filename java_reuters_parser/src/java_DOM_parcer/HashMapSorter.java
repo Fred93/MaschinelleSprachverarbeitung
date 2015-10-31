@@ -9,7 +9,7 @@ import java.util.LinkedList;
 import java.util.Map;
 
 public class HashMapSorter {
-	public static Map<String, Integer> sortByComparator(Map<String, Integer> unsortMap) {
+	public static HashMap<String, Integer> sortByComparator(Map<String, Integer> unsortMap) {
 
 		// Convert Map to List
 		LinkedList<Map.Entry<String, Integer>> list = new LinkedList<Map.Entry<String, Integer>>(unsortMap.entrySet());
@@ -23,7 +23,7 @@ public class HashMapSorter {
 		});
 
 		// Convert sorted map back to a Map
-		Map<String, Integer> sortedMap = new LinkedHashMap<String, Integer>();
+		HashMap<String, Integer> sortedMap = new LinkedHashMap<String, Integer>();
 		for (Iterator<Map.Entry<String, Integer>> it = list.iterator(); it.hasNext();) {
 			Map.Entry<String, Integer> entry = it.next();
 			sortedMap.put(entry.getKey(), entry.getValue());
