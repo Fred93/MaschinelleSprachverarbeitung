@@ -3,16 +3,16 @@ package java_DOM_parcer;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+
 import java.io.File;
 
 import java.io.FilenameFilter;
 
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
+
 import java.util.Map.Entry;
 import java.util.Set;
-
 
 
 
@@ -61,6 +61,11 @@ public class TaskManager {
 	
 		allTokensBody = HashMapSorter.sortByComparator(allTokensBody);
 		
+		Grafic plot = new Grafic(allTokensBody);
+		Thread showPlot = new Thread(plot);
+		showPlot.start();
+		
+		
 		printProperties();
 		//System.out.println(sortedMap);
 	}
@@ -71,8 +76,8 @@ public class TaskManager {
 			public boolean accept(File dir, String name) {
 				//
 				
-				//return (name.toLowerCase().endsWith(".sgm") & !name.contains("017"));
-				return (name.toLowerCase().endsWith(".sgm") & name.contains("000"));
+				return (name.toLowerCase().endsWith(".sgm") & !name.contains("017"));
+				//return (name.toLowerCase().endsWith(".sgm") & name.contains("000"));
 			}
 		});
 	}
@@ -102,10 +107,8 @@ public class TaskManager {
 }
 			    
 			}
-		 
-		 
-	}
-	
+	 }
+		
 	public void addValues(int amountDocs, int amountTokenBody, int amountTokenTitle,
 	int Topic, int Places,	int People){
 		this.totalAmountDocs += amountDocs;
