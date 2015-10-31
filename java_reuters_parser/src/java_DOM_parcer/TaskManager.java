@@ -76,8 +76,8 @@ public class TaskManager {
 			public boolean accept(File dir, String name) {
 				//
 				
-				return (name.toLowerCase().endsWith(".sgm") & !name.contains("017"));
-				//return (name.toLowerCase().endsWith(".sgm") & name.contains("000"));
+				//return (name.toLowerCase().endsWith(".sgm") & !name.contains("017"));
+				return (name.toLowerCase().endsWith(".sgm") & name.contains("000"));
 			}
 		});
 	}
