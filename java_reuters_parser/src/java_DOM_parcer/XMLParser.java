@@ -76,7 +76,7 @@ public class XMLParser implements Runnable {
 			
 			//Map<String, Integer> sortedMap = HashMapSorter.sortByComparator(allTokensBody);
 			//System.out.println(sortedMap);
-			manager.addTokenMap(allTokensBody, BODY);
+			//manager.addTokenMap(allTokensBody, BODY);
 			
 			
 			
@@ -90,7 +90,7 @@ public class XMLParser implements Runnable {
 	public int analyzeToken(NodeList nodeList, int type, String parent){
 		int ctr = 0;
 		
-		ExecutorService executor = Executors.newFixedThreadPool(4);
+		ExecutorService executor = Executors.newFixedThreadPool(1);
 		
 		for (int i = 0; i < nodeList.getLength(); i++) {
 			
@@ -102,12 +102,12 @@ public class XMLParser implements Runnable {
 				
 				
 				String TextContent = p.getTextContent().toLowerCase();
-				p.setTextContent(TextContent);
-				StringTokenizer st = new StringTokenizer(p.getTextContent());
+				//p.setTextContent(TextContent);
+				StringTokenizer st = new StringTokenizer(TextContent, " \t\n\r\f,.\";", false);
 				ctr=ctr+ st.countTokens();
 				
 				if (type==1){
-				Runnable worker = new TokenAnalyzer(this, st, type);
+				Runnable worker = new TokenAnalyzer(manager, st, type);
 				executor.execute(worker);
 				}
 				

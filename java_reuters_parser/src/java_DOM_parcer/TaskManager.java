@@ -2,8 +2,6 @@ package java_DOM_parcer;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
-
 import java.io.File;
 
 import java.io.FilenameFilter;
@@ -23,8 +21,8 @@ public class TaskManager {
 	private static String directory;
 
 	
-	
-	private int totalNumberofFiles;
+	static long startTime;
+	//private int totalNumberofFiles;
 	private int totalAmountDocs;
 	private int totalAmountTokenTitle;
 	private int totalAmountTokenBody;
@@ -46,11 +44,11 @@ public class TaskManager {
 	public TaskManager(String dirrectory){
 		dirrectory = directory;
 		readFiles();
-		totalNumberofFiles=files.length;
+		//totalNumberofFiles=files.length;
 	}
 	
 	private void startAnalyzing() {
-		ExecutorService executor = Executors.newFixedThreadPool(21);
+		ExecutorService executor = Executors.newCachedThreadPool();
 		for (int i = 0; i < files.length; i++) {
 			Runnable worker = new XMLParser(this, files[i]);
 			executor.execute(worker);
@@ -61,9 +59,6 @@ public class TaskManager {
 	
 		allTokensBody = HashMapSorter.sortByComparator(allTokensBody);
 		
-		Grafic plot = new Grafic(allTokensBody);
-		Thread showPlot = new Thread(plot);
-		showPlot.start();
 		
 		
 		printProperties();
@@ -76,14 +71,14 @@ public class TaskManager {
 			public boolean accept(File dir, String name) {
 				//
 				
-				//return (name.toLowerCase().endsWith(".sgm") & !name.contains("017"));
-				return (name.toLowerCase().endsWith(".sgm") & name.contains("000"));
+				return (name.toLowerCase().endsWith(".sgm") & !name.contains("017"));
+				//(return (name.toLowerCase().endsWith(".sgm") & name.contains("000"));
 			}
 		});
 	}
 	
 	 private void printProperties() {
-		 System.out.println("Total number of Files : "+totalNumberofFiles);
+	  // System.out.println("Total number of Files : "+totalNumberofFiles);
 		 System.out.println("Total number of Documents: " + totalAmountDocs);
 		 System.out.println("Total Number of Tokens of TEXT/TITLE: " + totalAmountTokenTitle);
 		 System.out.println("Total Number of Tokens of TEXT/BODY: " + totalAmountTokenBody);	
@@ -101,12 +96,14 @@ public class TaskManager {
 			 tokensprinted++;
 			    String key = entry.getKey();
 			    int value = entry.getValue();
-			    System.out.print(key + ": "+ value +  " ");
+			    System.out.println(key + ": "+ value +  " ");
            if (tokensprinted==100){
           	break;
 }
 			    
 			}
+		 long endTime = System.nanoTime();
+		 System.out.println("Took "+(endTime - startTime) + " ns"); 
 	 }
 		
 	public void addValues(int amountDocs, int amountTokenBody, int amountTokenTitle,
@@ -126,9 +123,18 @@ public class TaskManager {
 	}
 	 
 	public static void main(String[] args) {
-		directory = "reuters21578";	
-		TaskManager tp = new TaskManager(directory);
-		tp.startAnalyzing();
+		 startTime = System.nanoTime();
+		if (args.length==0){
+			System.out.println("Please spacify directory as input parameter");
+		} else{
+			directory = args[0];	
+			TaskManager tp = new TaskManager(directory);
+			tp.startAnalyzing();
+			
+			
+		}
+		
+		
 	}
 
 	public void addTokenMap(HashMap<String, Integer> tokens, int type) {
