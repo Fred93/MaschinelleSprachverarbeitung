@@ -48,7 +48,7 @@ public class TaskManager {
 	}
 	
 	private void startAnalyzing() {
-		ExecutorService executor = Executors.newCachedThreadPool();
+		ExecutorService executor = Executors.newFixedThreadPool(10);
 		for (int i = 0; i < files.length; i++) {
 			Runnable worker = new XMLParser(this, files[i]);
 			executor.execute(worker);
@@ -106,7 +106,7 @@ public class TaskManager {
 		 System.out.println("Took "+(endTime - startTime) + " ns"); 
 	 }
 		
-	public void addValues(int amountDocs, int amountTokenBody, int amountTokenTitle,
+	public synchronized void addValues(int amountDocs, int amountTokenBody, int amountTokenTitle,
 	int Topic, int Places,	int People){
 		this.totalAmountDocs += amountDocs;
 		this.totalAmountTokenBody += amountTokenBody;
@@ -137,7 +137,7 @@ public class TaskManager {
 		
 	}
 
-	public void addTokenMap(HashMap<String, Integer> tokens, int type) {
+	public synchronized void addTokenMap(HashMap<String, Integer> tokens, int type) {
 		if (type == XMLParser.BODY){
 			tokens.forEach((k,v)->allTokensBody.merge(k, v, (v1,v2) -> (v1+v2)));
 			
@@ -145,7 +145,7 @@ public class TaskManager {
 		}
 		
 	}
-	public void mergeSets(Set<String> distinctValues, String type){
+	public synchronized void mergeSets(Set<String> distinctValues, String type){
 		if (type=="TOPICS"){
 		//System.out.println(distinctValues.size());
 		distinctTopics.addAll(distinctValues);

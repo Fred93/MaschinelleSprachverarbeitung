@@ -90,7 +90,8 @@ public class XMLParser implements Runnable {
 	public int analyzeToken(NodeList nodeList, int type, String parent){
 		int ctr = 0;
 		
-		ExecutorService executor = Executors.newFixedThreadPool(1);
+		ExecutorService executor = Executors.newFixedThreadPool(4);
+		
 		
 		for (int i = 0; i < nodeList.getLength(); i++) {
 			
@@ -201,13 +202,13 @@ public class XMLParser implements Runnable {
 		return xmlFile;
 	}
 
-	public void passTokens(HashMap<String, Integer> tokens, int type) {
+/*	public synchronized void passTokens(HashMap<String, Integer> tokens, int type) {
 		if (type == BODY){
 		
 			tokens.forEach((k,v)->allTokensBody.merge(k, v, (v1,v2) -> (v1+v2)));
 		}
 		
-	}
+	}*/
 	
 
 
