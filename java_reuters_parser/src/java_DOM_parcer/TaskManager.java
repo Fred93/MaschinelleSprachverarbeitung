@@ -102,8 +102,8 @@ public class TaskManager {
 }
 			    
 			}
-		 long endTime = System.nanoTime();
-		 System.out.println("Took "+(endTime - startTime) + " ns"); 
+		 //long endTime = System.nanoTime();
+		 //System.out.println("Took "+(endTime - startTime) + " ns"); 
 	 }
 		
 	public synchronized void addValues(int amountDocs, int amountTokenBody, int amountTokenTitle,
@@ -123,7 +123,7 @@ public class TaskManager {
 	}
 	 
 	public static void main(String[] args) {
-		 startTime = System.nanoTime();
+		// startTime = System.nanoTime();
 		if (args.length==0){
 			System.out.println("Please spacify directory as input parameter");
 		} else{

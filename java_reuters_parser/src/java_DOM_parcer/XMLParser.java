@@ -7,7 +7,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 
-import java.util.HashMap;
+
 import java.util.HashSet;
 
 import java.util.Set;
@@ -34,7 +34,7 @@ public class XMLParser implements Runnable {
 	private int amountDocs;
 	private int amountTokenBody = 0;
 	private int amountTokenTitle = 0;
-	private HashMap<String, Integer> allTokensBody = new HashMap<>();
+
 	
 	private int Topic;
 
