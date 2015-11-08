@@ -24,8 +24,8 @@ public class TaskManager {
 	static long startTime;
 	//private int totalNumberofFiles;
 	private int totalAmountDocs;
-	private int totalAmountTokenTitle;
-	private int totalAmountTokenBody;
+
+	private int totalTextBody;
 	
 	private int Topic;
 
@@ -80,8 +80,8 @@ public class TaskManager {
 	 private void printProperties() {
 	  // System.out.println("Total number of Files : "+totalNumberofFiles);
 		 System.out.println("Total number of Documents: " + totalAmountDocs);
-		 System.out.println("Total Number of Tokens of TEXT/TITLE: " + totalAmountTokenTitle);
-		 System.out.println("Total Number of Tokens of TEXT/BODY: " + totalAmountTokenBody);	
+		 System.out.println("Total Number of Tokens of TEXT/TITLE and TEXT/BODY: " + totalTextBody);
+			
 		 System.out.println("Total Number of entities of topics: " + Topic);
 		 System.out.println("Total Number of entities of topics distinct: " + distinctTopics.size());
 		 System.out.println("Total Number of entities of places: " + Places);
@@ -106,11 +106,11 @@ public class TaskManager {
 		 //System.out.println("Took "+(endTime - startTime) + " ns"); 
 	 }
 		
-	public synchronized void addValues(int amountDocs, int amountTokenBody, int amountTokenTitle,
+	public synchronized void addValues(int amountDocs, int totalTextBody,
 	int Topic, int Places,	int People){
 		this.totalAmountDocs += amountDocs;
-		this.totalAmountTokenBody += amountTokenBody;
-		this.totalAmountTokenTitle += amountTokenTitle;
+		this.totalTextBody += totalTextBody;
+	
 		
 		this.Topic +=  Topic;
 	

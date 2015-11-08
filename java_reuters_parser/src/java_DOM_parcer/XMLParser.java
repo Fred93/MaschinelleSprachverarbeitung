@@ -62,8 +62,10 @@ public class XMLParser implements Runnable {
 			NodeList titles = doc.getElementsByTagName("TITLE");
 			NodeList bodies = doc.getElementsByTagName("BODY");
 		   
-			amountTokenBody = analyzeToken(bodies, BODY, "TEXT");
-			amountTokenTitle = analyzeToken(titles, TITLE, "TEXT");
+			amountTokenBody = analyzeToken(bodies, BODY);
+			amountTokenTitle = analyzeToken(titles, TITLE);
+			int totalTextBody = amountTokenBody+amountTokenTitle;
+			
 			NodeList docs = doc.getElementsByTagName("REUTERS");
 			amountDocs = docs.getLength();
 			
@@ -80,14 +82,14 @@ public class XMLParser implements Runnable {
 			
 			
 			
-			manager.addValues(amountDocs, amountTokenBody, amountTokenTitle, Topic, Places, People);
+			manager.addValues(amountDocs, totalTextBody, Topic, Places, People);
 		} catch (ParserConfigurationException | SAXException | IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 	
-	public int analyzeToken(NodeList nodeList, int type, String parent){
+	public int analyzeToken(NodeList nodeList, int type){
 		int ctr = 0;
 		
 		ExecutorService executor = Executors.newFixedThreadPool(4);
@@ -97,7 +99,7 @@ public class XMLParser implements Runnable {
 			
 			Node p = nodeList.item(i);
 			
-			if (p.getParentNode().getNodeName()==parent){
+			//if (p.getParentNode().getNodeName()==parent){
 				
 				
 				
@@ -113,7 +115,7 @@ public class XMLParser implements Runnable {
 				}
 				
 				
-		     } 
+		    // } 
 		}
 		executor.shutdown();
 		while(!executor.isTerminated()){
