@@ -1,4 +1,4 @@
-package java_DOM_parcer;
+
 
 import java.util.HashMap;
 
@@ -7,10 +7,10 @@ import java.util.StringTokenizer;
 public class TokenAnalyzer implements Runnable {
 	private StringTokenizer st;
 	
-	private TaskManager manager;
+	private XMLParser manager;
 	private int type;
 	
-	public TokenAnalyzer(TaskManager manager, StringTokenizer st, int type) {
+	public TokenAnalyzer(XMLParser manager, StringTokenizer st) {
 		this.st = st;
 		this.manager = manager;
 		this.type = type;
@@ -27,12 +27,7 @@ public class TokenAnalyzer implements Runnable {
 				tokens.put(s, 1);
 			}
 		}
-		//System.out.println(tokens);
-		//System.out.println("      ");
-		//Map<String, Integer> sortedMap = sortByComparator(tokens);
-		//System.out.println(sortedMap);
-		//System.out.println("      ");
-		manager.addTokenMap(tokens, type);
+		manager.addTokenMap(tokens);
 
 	}
 }
