@@ -1,5 +1,3 @@
-
-
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.io.File;
@@ -14,34 +12,16 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-
-
-
-public class TaskManager {
-	
+public class TaskManager {	
 	
 	private static String directory;
-
-	
 	static long startTime;
-	//private int totalNumberofFiles;
 	private int totalAmountDocs;
-	private int totalAmountTokenTitle;
-	private int totalAmountTokenBody;
-	
 	private int Topic;
-
 	private int Places;
-	
 	private int People;
-	
-	
-	
 	private File[] files;
 	private HashMap<String, Integer> allTokens = new HashMap<>();
-	private HashMap<String, Integer> topics = new HashMap<>();
-	private HashMap<String, Integer> people = new HashMap<>();
-	private HashMap<String, Integer> places = new HashMap<>();
 	private Set<String> distinctTopics = new HashSet<String>();
 	private Set<String> distinctPeople = new HashSet<String>();
 	private Set<String> distinctPlaces = new HashSet<String>();
@@ -49,7 +29,6 @@ public class TaskManager {
 	public TaskManager(String dirrectory){
 		dirrectory = directory;
 		readFiles();
-		//totalNumberofFiles=files.length;
 	}
 	
 	private void startAnalyzing() {
@@ -61,31 +40,22 @@ public class TaskManager {
 		executor.shutdown();
 		while(!executor.isTerminated()){
 		}
-	
 		allTokens = HashMapSorter.sortByComparator(allTokens);
-		
 		printProperties();
-		//System.out.println(sortedMap);
 	}
 
 	public void readFiles(){
 		File dir = new File(directory);
 		files = dir.listFiles(new FilenameFilter() {
 			public boolean accept(File dir, String name) {
-				//
-				
 				return (name.toLowerCase().endsWith(".xml") & !name.contains("017"));
-				//(return (name.toLowerCase().endsWith(".sgm") & name.contains("000"));
 			}
 		});
 	}
 	
 	 private void printProperties() {
-	  // System.out.println("Total number of Files : "+totalNumberofFiles);
 		 System.out.println("Total number of Documents: " + totalAmountDocs);
-		 System.out.println("Total Number of Tokens: " + allTokens.size());
-		 System.out.println("Total Number of Tokens of TEXT/TITLE: " + totalAmountTokenTitle);
-		 System.out.println("Total Number of Tokens of TEXT/BODY: " + totalAmountTokenBody);	
+		 System.out.println("Total Number of distinct Tokens: " + allTokens.size());	
 		 System.out.println("Total Number of entities of topics: " + Topic);
 		 System.out.println("Total Number of entities of topics distinct: " + distinctTopics.size());
 		 System.out.println("Total Number of entities of places: " + Places);
@@ -110,6 +80,7 @@ public class TaskManager {
 		 System.out.println("Took "+(endTime - startTime)/1000000000.0 + " s"); 
 	 }
 		
+	@SuppressWarnings("unused")
 	private void writeAsCSV(HashMap<String, Integer> allTokens) {
 		try {
 			
@@ -134,26 +105,16 @@ public class TaskManager {
 		    writer.flush();
 		    writer.close();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
 	}
 
-	public synchronized void addValues(int amountDocs, int amountTokenBody, int amountTokenTitle,
-	int Topic, int Places,	int People){
+	public synchronized void addValues(int amountDocs, int Topic, int Places,	int People){
 		this.totalAmountDocs += amountDocs;
-		this.totalAmountTokenBody += amountTokenBody;
-		this.totalAmountTokenTitle += amountTokenTitle;
-		
 		this.Topic +=  Topic;
-	
 		this.Places += Places;
-	
 		this.People += People;
-	
-		
-		
 	}
 	 
 	public static void main(String[] args) {

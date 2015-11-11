@@ -1,5 +1,3 @@
-
-
 import java.util.HashMap;
 
 import java.util.StringTokenizer;
@@ -8,12 +6,10 @@ public class TokenAnalyzer implements Runnable {
 	private StringTokenizer st;
 	
 	private XMLParser manager;
-	private int type;
 	
 	public TokenAnalyzer(XMLParser manager, StringTokenizer st) {
 		this.st = st;
 		this.manager = manager;
-		this.type = type;
 	}
 
 	@Override
