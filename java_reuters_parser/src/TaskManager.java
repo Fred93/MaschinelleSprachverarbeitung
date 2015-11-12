@@ -55,7 +55,7 @@ public class TaskManager {
 	
 	 private void printProperties() {
 		 System.out.println("Total number of Documents: " + totalAmountDocs);
-		 System.out.println("Total Number of distinct Tokens: " + allTokens.size());	
+		 System.out.println("Total Number of Tokens: " + countToken(allTokens));	
 		 System.out.println("Total Number of entities of topics: " + Topic);
 		 System.out.println("Total Number of entities of topics distinct: " + distinctTopics.size());
 		 System.out.println("Total Number of entities of places: " + Places);
@@ -63,7 +63,7 @@ public class TaskManager {
 		 System.out.println("Total Number of entities of people: " + People);
 		 System.out.println("Total Number of entities of people distinct: " + distinctPeople.size());
 		 
-		 writeAsCSV(allTokens);
+		 //writeAsCSV(allTokens);
 		 System.out.println("Top 100 tokens: ");
 		 int tokensprinted =0;
 		 for(Entry<String, Integer> entry : allTokens.entrySet()) {
@@ -80,6 +80,14 @@ public class TaskManager {
 		 
 	 }
 		
+	private int countToken(HashMap<String, Integer> allTokens) {
+		int sum = 0;
+		for(Entry<String, Integer> entry : allTokens.entrySet()) {
+			 sum = sum + entry.getValue();
+		 }
+		return sum;
+	}
+
 	@SuppressWarnings("unused")
 	private void writeAsCSV(HashMap<String, Integer> allTokens) {
 		try {
