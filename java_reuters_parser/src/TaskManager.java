@@ -63,9 +63,8 @@ public class TaskManager {
 		 System.out.println("Total Number of entities of people: " + People);
 		 System.out.println("Total Number of entities of people distinct: " + distinctPeople.size());
 		 
-		 
+		 writeAsCSV(allTokens);
 		 System.out.println("Top 100 tokens: ");
-		 //writeAsCSV(allTokens);
 		 int tokensprinted =0;
 		 for(Entry<String, Integer> entry : allTokens.entrySet()) {
 			 tokensprinted++;
@@ -78,6 +77,7 @@ public class TaskManager {
 		 }
 		 long endTime = System.nanoTime();
 		 System.out.println("Took "+(endTime - startTime)/1000000000.0 + " s"); 
+		 
 	 }
 		
 	@SuppressWarnings("unused")
@@ -85,7 +85,7 @@ public class TaskManager {
 		try {
 			
 			System.out.println("Write csv...");
-			FileWriter writer = new FileWriter("test.csv");
+			FileWriter writer = new FileWriter("test1.csv");
 			//Write Header
 			writer.append("Token");
 			writer.append(" ");
@@ -95,13 +95,27 @@ public class TaskManager {
 			
 			LinkedList<Map.Entry<String, Integer>> list = new LinkedList<Map.Entry<String, Integer>>(allTokens.entrySet());
 			//Write Data
+			System.out.println(list.size());
+			int ctr = 0;
 			for (Iterator<Map.Entry<String, Integer>> it = list.iterator(); it.hasNext();) {
+				if (ctr%600000 == 0 && ctr != 0){
+					System.out.println("wrote " + ctr + " rows");
+					writer.flush();
+					writer.close();
+					writer = new FileWriter("test2.csv");
+					writer.append("Token");
+					writer.append(" ");
+					writer.append("Amount");
+					writer.append("\n");
+				}
+				ctr ++;
 				Map.Entry<String, Integer> entry = it.next();
-				writer.append(entry.getKey());
+				writer.append("'" + entry.getKey()+"'");
 				writer.append(" ");
 				writer.append(entry.getValue()+"");
 				writer.append("\n");
 			}
+			System.out.println(ctr);
 		    writer.flush();
 		    writer.close();
 		} catch (IOException e) {
