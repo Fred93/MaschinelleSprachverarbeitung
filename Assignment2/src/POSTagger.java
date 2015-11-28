@@ -10,9 +10,11 @@ import java.util.StringTokenizer;
 
 public class POSTagger {
 	private TransitionManager transitionManager;
+	private EmissionManager emissionManager;
 	
 	public POSTagger(){
 		transitionManager = new TransitionManager();
+		emissionManager = new EmissionManager();
 	}
 	
 	public File[] readFiles(String directory){
@@ -31,6 +33,7 @@ public class POSTagger {
 				String[] res = token.split("/");
 				System.out.println(res[1]);
 				transitionManager.addTag(res[1]);
+				emissionManager.addTerm(res[0]);
 			}
 		    System.out.println("Finished File");
 		}
@@ -42,6 +45,8 @@ public class POSTagger {
 	
 	public void trainModel(String[] strings){
 		transitionManager.calculateTransitionProbalilities(strings);
+		emissionManager.setTagSet(transitionManager.getTagSet());
+		emissionManager.calculateEmissionProbalilities(strings);;
 	}
 	
 	public String[] convertFilesToStrings(File[] files){
