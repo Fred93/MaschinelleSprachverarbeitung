@@ -15,6 +15,7 @@ public class TransitionManager {
 	private Set<String> tagSet = new HashSet<String>();
 	private double[][] transitionProbabilities;
 	public final static String START = "start";
+	private List listTagSet;
 	
 	public TransitionManager(){
 		tagSet.add(TransitionManager.START);
@@ -32,11 +33,31 @@ public class TransitionManager {
 		//Initialize matrix
 		transitionProbabilities = new double[tagSet.size()][tagSet.size()];
 		
+		listTagSet = Arrays.asList(tagSet.toArray(new String[tagSet.size()]));
+		
+		int[][] transitionCouter = countTransitions(strings);
+		
+		for (int i = 0; i < transitionCouter.length; i++) {
+			int rowSum = getRowSum(transitionCouter[i]);
+			for (int j = 0; j < transitionCouter.length; j++) {
+				transitionProbabilities[i][j] = (transitionCouter[i][j]*1.0)/rowSum;
+			}
+		}
+		
+		writeArrayAsCsv(transitionProbabilities);
+	}
+	
+	public int getRowSum(int[] row){
+		int sum = 0;
+		for (int i : row) {
+			sum = sum + i;
+		}
+		return sum;
+	}
+	
+	public int[][] countTransitions(String[] strings){
 		//Transition Counter Matrix
 		int[][] transitionCounter = new int[tagSet.size()][tagSet.size()];
-		
-		
-		List listTagSet = Arrays.asList(tagSet.toArray(new String[tagSet.size()]));
 		
 		//Iterate over all Strings to count transitions
 		String previousTag = TransitionManager.START;
@@ -52,6 +73,7 @@ public class TransitionManager {
 		}
 		System.out.println(transitionCounter);
 		writeArrayAsCsv(transitionCounter);
+		return transitionCounter;
 	}
 	
 	public void writeArrayAsCsv(int[][]array){
@@ -59,6 +81,27 @@ public class TransitionManager {
 			
 			System.out.println("Write csv...");
 			FileWriter writer = new FileWriter("transitionCounter.csv");			
+			for (int i = 0; i < array.length; i++) {
+				for (int j = 0; j < array[i].length; j++) {
+					writer.append(array[i][j] + "");
+					if (j != array[i].length-1){
+						writer.append(";");
+					}
+				}
+				writer.append("\n");
+			}
+		    writer.flush();
+		    writer.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void writeArrayAsCsv(double[][]array){
+		try {
+			
+			System.out.println("Write csv...");
+			FileWriter writer = new FileWriter("transitionProbabilities.csv");			
 			for (int i = 0; i < array.length; i++) {
 				for (int j = 0; j < array[i].length; j++) {
 					writer.append(array[i][j] + "");
