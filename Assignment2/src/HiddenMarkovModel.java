@@ -6,13 +6,14 @@ import java.io.FileReader;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.StringTokenizer;
 
-public class POSTagger {
+public class HiddenMarkovModel {
 	private TransitionManager transitionManager;
 	private EmissionManager emissionManager;
 	
-	public POSTagger(){
+	public HiddenMarkovModel(){
 		transitionManager = new TransitionManager();
 		emissionManager = new EmissionManager();
 	}
@@ -71,10 +72,40 @@ public class POSTagger {
 		}
 		return strings;
 	}
+	
+	public String[] convertTextToArrayList(String s){
+		ArrayList<String> strings = new ArrayList<>();
+		StringTokenizer stringTokenizer = new StringTokenizer(s, " \t\n\r\f", false);
+		while (stringTokenizer.hasMoreElements()) {
+			strings.add((String) stringTokenizer.nextElement());
+		}
+		return (String[]) strings.toArray();
+	}
+	
+	public void viterbi(String s){
+		String[] tokens = convertTextToArrayList(s);
+		String[] tags = new String[tokens.length];
+		viterbiStep(tokens, tags, 0);
+	}
+	
+	public double viterbiStep(String[] tokens, String[] tags, int i){
+		/*if (index == 0){
+			
+		}else{
+			String token = tokens[i];
+			if (i == 0){
+				String previousTag = TransitionManager.START;
+			}else{
+				String prevousTag = tags[i-1];
+			}
+			
+		}*/
+		return 0;
+	}
 
 	public static void main(String[] args) {
 		String directory = "brown_learn";
-		POSTagger tagger = new POSTagger();
+		HiddenMarkovModel tagger = new HiddenMarkovModel();
 		File[] files = tagger.readFiles(directory);
 		String[] strings = tagger.convertFilesToStrings(files);
 		tagger.findTags(strings);

@@ -29,6 +29,10 @@ public class TransitionManager {
 		return tagSet;
 	}
 	
+	public double getEmissionProbability(String fromTag, String toTag){
+		return transitionProbabilities[listTagSet.indexOf(fromTag)][listTagSet.indexOf(toTag)];
+	}
+	
 	public void calculateTransitionProbalilities(String[] strings){
 		//Initialize matrix
 		transitionProbabilities = new double[tagSet.size()][tagSet.size()];
