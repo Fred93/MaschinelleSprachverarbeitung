@@ -18,6 +18,7 @@ public class EmissionManager {
 	public final static String START = "start";
 	private List listTagSet;
 	private List listTermSet;
+	private double lambda = 0.5;
 	
 	public EmissionManager(){
 		tagSet.add(EmissionManager.START);
@@ -49,7 +50,9 @@ public class EmissionManager {
 		for (int i = 0; i < emissionCounter.length; i++) {
 			int rowSum = getRowSum(emissionCounter[i]);
 			for (int j = 0; j < emissionCounter[i].length; j++) {
-				emissionProbabilities[i][j] = (emissionCounter[i][j]*1.0)/rowSum;
+				
+				//Simple (bad) smoothing
+				emissionProbabilities[i][j] = (emissionCounter[i][j]*1.0+lambda)/(rowSum+lambda*emissionCounter[i].length);
 			}
 		}
 		

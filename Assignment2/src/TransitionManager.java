@@ -16,6 +16,7 @@ public class TransitionManager {
 	private double[][] transitionProbabilities;
 	public final static String START = "start";
 	private List listTagSet;
+	private double lambda = 0.5;
 	
 	public TransitionManager(){
 		tagSet.add(TransitionManager.START);
@@ -27,6 +28,10 @@ public class TransitionManager {
 	
 	public Set<String> getTagSet(){
 		return tagSet;
+	}
+	
+	public int getTagIndex(String tag){
+		return listTagSet.indexOf(tag);
 	}
 	
 	public double getTransitionProbability(String fromTag, String toTag){
@@ -44,7 +49,8 @@ public class TransitionManager {
 		for (int i = 0; i < transitionCouter.length; i++) {
 			int rowSum = getRowSum(transitionCouter[i]);
 			for (int j = 0; j < transitionCouter.length; j++) {
-				transitionProbabilities[i][j] = (transitionCouter[i][j]*1.0)/rowSum;
+				//Simple  smoothing
+				transitionProbabilities[i][j] = (transitionCouter[i][j]*1.0+lambda)/(rowSum+lambda*tagSet.size());
 			}
 		}
 		

@@ -11,10 +11,13 @@ import java.util.StringTokenizer;
 
 import com.sun.org.apache.xerces.internal.util.SynchronizedSymbolTable;
 
+import javafx.util.Pair;
+
 public class HiddenMarkovModel {
 	private TransitionManager transitionManager;
 	private EmissionManager emissionManager;
 	private String[] assignedTags;
+	private double[][] probabilityTabular;
 	
 	public HiddenMarkovModel(){
 		transitionManager = new TransitionManager();
@@ -85,44 +88,58 @@ public class HiddenMarkovModel {
 		String[] tokens = convertTextToArray(s);
 		String[] tags = new String[tokens.length];
 		assignedTags = tags;
+		probabilityTabular = new double[transitionManager.getTagSet().size()][tokens.length];
 		viterbiStep(tokens, tokens.length-1);
 	}
 	
-	public double viterbiStep(String[] tokens, int i){
+	public void viterbiStep(String[] tokens, int i){
 		
-		double maxProbability = 0;
+		
 		String bestHit = "";
 		if (i == -1){
-			maxProbability = 1;
+			//return 1;
 		}else{
+			
 			System.out.println("Vitebi step for: " + tokens[i]);
 			String token = tokens[i];
-			double maxPrevious = viterbiStep(tokens, i-1);
-			String previousTag;
+			viterbiStep(tokens, i-1);
+			/*String previousTag;
 			if (i == 0){
 				previousTag = TransitionManager.START;
 			}else{
 				previousTag = assignedTags[i-1];
-			}
-			
+			}*/
+			double maxPathProbability = 0;
 			for (String tag : transitionManager.getTagSet()) {
-				double emissionProbability = emissionManager.getEmissionProbability(tag, token);
-				double transitionProbabiliy = transitionManager.getTransitionProbability(previousTag, tag);
-				if (emissionProbability>0){
+				maxPathProbability = 0;
+				bestHit = "NA";
+				for (String previousTag : transitionManager.getTagSet()) {
+					double maxPrevious = 1;
+					if (i > 0){
+						maxPrevious = probabilityTabular[transitionManager.getTagIndex(previousTag)][i-1];
+					}
+					
+					double transition = transitionManager.getTransitionProbability(previousTag, tag);
+					double totalPathProbability = maxPrevious * transition;
+					//Look for maximal Path Prob. 
+					if (totalPathProbability > maxPathProbability){
+						maxPathProbability = totalPathProbability;
+						bestHit = tag;
+						System.out.println("setzt best hit auf " + tag);
+					}
 				}
-				if (token.startsWith("may") && tag.equals("nn$")){
-					emissionManager.getEmissionProbability(tag, token);
-				}
-				double totalProbability = maxPrevious*emissionProbability*transitionProbabiliy;
-				if (totalProbability > maxProbability){
-					maxProbability = totalProbability;
-					bestHit = tag;
-				}
+				
+				System.out.println("i: " + i);
+				System.out.println("Best Hit " + bestHit);
+				System.out.println(transitionManager.getTagIndex(tag));
+				
+				System.out.println("Eintrag wird gemacht für tag " + tag);
+				probabilityTabular[transitionManager.getTagIndex(tag)][i] = maxPathProbability*emissionManager.getEmissionProbability(tag, token);
+				transitionManager.writeArrayAsCsv(probabilityTabular);
+				
 			}
-			System.out.println("Best Hit: " + bestHit);
-			assignedTags[i] = bestHit;
 		}
-		return maxProbability;
+		
 	}
 
 	public static void main(String[] args) {
@@ -139,3 +156,4 @@ public class HiddenMarkovModel {
 	}
 
 }
+ 
