@@ -29,7 +29,7 @@ public class TransitionManager {
 		return tagSet;
 	}
 	
-	public double getEmissionProbability(String fromTag, String toTag){
+	public double getTransitionProbability(String fromTag, String toTag){
 		return transitionProbabilities[listTagSet.indexOf(fromTag)][listTagSet.indexOf(toTag)];
 	}
 	

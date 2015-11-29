@@ -32,12 +32,14 @@ public class EmissionManager {
 	}
 	
 	public double getEmissionProbability(String tag, String term){
-		return emissionProbabilities[listTagSet.indexOf(tag)][listTermSet.indexOf(term)];
+		int pos1 = listTagSet.indexOf(tag);
+		int pos2 = listTermSet.indexOf(term);
+		return emissionProbabilities[pos1][pos2];
 	}
 	
 	public void calculateEmissionProbalilities(String[] strings){
 		//Initialize matrix
-		emissionProbabilities = new double[tagSet.size()][tagSet.size()];
+		emissionProbabilities = new double[tagSet.size()][termSet.size()];
 		
 		listTagSet = Arrays.asList(tagSet.toArray(new String[tagSet.size()]));
 		listTermSet = Arrays.asList(termSet.toArray(new String[termSet.size()]));
@@ -46,7 +48,7 @@ public class EmissionManager {
 		
 		for (int i = 0; i < emissionCounter.length; i++) {
 			int rowSum = getRowSum(emissionCounter[i]);
-			for (int j = 0; j < emissionCounter.length; j++) {
+			for (int j = 0; j < emissionCounter[i].length; j++) {
 				emissionProbabilities[i][j] = (emissionCounter[i][j]*1.0)/rowSum;
 			}
 		}
@@ -79,7 +81,6 @@ public class EmissionManager {
 				emissionCounter[listTagSet.indexOf(tag)][listTermSet.indexOf(term)]++;
 			}
 		}
-		System.out.println(emissionCounter);
 		writeArrayAsCsv(emissionCounter);
 		return emissionCounter;
 	}

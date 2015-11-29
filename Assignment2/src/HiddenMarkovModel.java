@@ -9,9 +9,12 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
 
+import com.sun.org.apache.xerces.internal.util.SynchronizedSymbolTable;
+
 public class HiddenMarkovModel {
 	private TransitionManager transitionManager;
 	private EmissionManager emissionManager;
+	private String[] assignedTags;
 	
 	public HiddenMarkovModel(){
 		transitionManager = new TransitionManager();
@@ -30,18 +33,14 @@ public class HiddenMarkovModel {
 			StringTokenizer stringTokenizer = new StringTokenizer(string, " \t\n\r\f", false);
 		    while (stringTokenizer.hasMoreElements()) {
 				String token = (String) stringTokenizer.nextElement();
-				System.out.println(token);
 				String[] res = token.split("/");
-				System.out.println(res[1]);
 				transitionManager.addTag(res[1]);
 				emissionManager.addTerm(res[0]);
 			}
-		    System.out.println("Finished File");
 		}
-	    System.out.println("Amount tags: " + transitionManager.getTagSet().size() +" \n\n\n");
-	    for (String tag: transitionManager.getTagSet()) {
+	    /*for (String tag: transitionManager.getTagSet()) {
 			System.out.println(tag);
-		}
+		}*/
 	}
 	
 	public void trainModel(String[] strings){
@@ -73,34 +72,57 @@ public class HiddenMarkovModel {
 		return strings;
 	}
 	
-	public String[] convertTextToArrayList(String s){
+	public String[] convertTextToArray(String s){
 		ArrayList<String> strings = new ArrayList<>();
 		StringTokenizer stringTokenizer = new StringTokenizer(s, " \t\n\r\f", false);
 		while (stringTokenizer.hasMoreElements()) {
 			strings.add((String) stringTokenizer.nextElement());
 		}
-		return (String[]) strings.toArray();
+		return strings.toArray(new String[strings.size()]);
 	}
 	
 	public void viterbi(String s){
-		String[] tokens = convertTextToArrayList(s);
+		String[] tokens = convertTextToArray(s);
 		String[] tags = new String[tokens.length];
-		viterbiStep(tokens, tags, 0);
+		assignedTags = tags;
+		viterbiStep(tokens, tokens.length-1);
 	}
 	
-	public double viterbiStep(String[] tokens, String[] tags, int i){
-		/*if (index == 0){
-			
+	public double viterbiStep(String[] tokens, int i){
+		
+		double maxProbability = 0;
+		String bestHit = "";
+		if (i == -1){
+			maxProbability = 1;
 		}else{
+			System.out.println("Vitebi step for: " + tokens[i]);
 			String token = tokens[i];
+			double maxPrevious = viterbiStep(tokens, i-1);
+			String previousTag;
 			if (i == 0){
-				String previousTag = TransitionManager.START;
+				previousTag = TransitionManager.START;
 			}else{
-				String prevousTag = tags[i-1];
+				previousTag = assignedTags[i-1];
 			}
 			
-		}*/
-		return 0;
+			for (String tag : transitionManager.getTagSet()) {
+				double emissionProbability = emissionManager.getEmissionProbability(tag, token);
+				double transitionProbabiliy = transitionManager.getTransitionProbability(previousTag, tag);
+				if (emissionProbability>0){
+				}
+				if (token.startsWith("may") && tag.equals("nn$")){
+					emissionManager.getEmissionProbability(tag, token);
+				}
+				double totalProbability = maxPrevious*emissionProbability*transitionProbabiliy;
+				if (totalProbability > maxProbability){
+					maxProbability = totalProbability;
+					bestHit = tag;
+				}
+			}
+			System.out.println("Best Hit: " + bestHit);
+			assignedTags[i] = bestHit;
+		}
+		return maxProbability;
 	}
 
 	public static void main(String[] args) {
@@ -110,6 +132,9 @@ public class HiddenMarkovModel {
 		String[] strings = tagger.convertFilesToStrings(files);
 		tagger.findTags(strings);
 		tagger.trainModel(strings);
+		System.out.println("Finished Model training");
+		String text = "The mayor's present term of office expires Jan. 1 .";
+		tagger.viterbi(text);
 		
 	}
 
