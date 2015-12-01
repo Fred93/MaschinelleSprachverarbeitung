@@ -8,7 +8,7 @@ public class CSVWriter {
 		try {
 			
 			System.out.println("Write csv...");
-			FileWriter writer = new FileWriter("filename");			
+			FileWriter writer = new FileWriter(filename);			
 			for (int i = 0; i < array.length; i++) {
 				for (int j = 0; j < array[i].length; j++) {
 					writer.append(array[i][j] + "");
@@ -29,7 +29,7 @@ public class CSVWriter {
 		try {
 			
 			System.out.println("Write csv...");
-			FileWriter writer = new FileWriter("filename");			
+			FileWriter writer = new FileWriter(filename);			
 			for (int i = 0; i < array.length; i++) {
 				for (int j = 0; j < array[i].length; j++) {
 					writer.append(array[i][j] + "");
