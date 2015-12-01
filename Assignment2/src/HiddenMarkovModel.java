@@ -2,16 +2,10 @@ import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FilenameFilter;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
-
-import com.sun.org.apache.xerces.internal.util.SynchronizedSymbolTable;
-
-import javafx.util.Pair;
+import utils.CSVWriter;
 
 public class HiddenMarkovModel {
 	private TransitionManager transitionManager;
@@ -20,8 +14,8 @@ public class HiddenMarkovModel {
 	private double[][] probabilityTabular;
 	
 	public HiddenMarkovModel(){
-		transitionManager = new TransitionManager();
-		emissionManager = new EmissionManager();
+		transitionManager = new TransitionManager(0.1);
+		emissionManager = new EmissionManager(0.1);
 	}
 	
 	public File[] readFiles(String directory){
@@ -90,6 +84,10 @@ public class HiddenMarkovModel {
 		assignedTags = tags;
 		probabilityTabular = new double[transitionManager.getTagSet().size()][tokens.length];
 		viterbiStep(tokens, tokens.length-1);
+		CSVWriter.writeArrayAsCsv(probabilityTabular, "probabilityTabular.csv");
+		for (String string : assignedTags) {
+			System.out.println(string);
+		}
 	}
 	
 	public void viterbiStep(String[] tokens, int i){
@@ -110,6 +108,7 @@ public class HiddenMarkovModel {
 				previousTag = assignedTags[i-1];
 			}*/
 			double maxPathProbability = 0;
+			double maxProb = 0;
 			for (String tag : transitionManager.getTagSet()) {
 				maxPathProbability = 0;
 				bestHit = "NA";
@@ -125,18 +124,15 @@ public class HiddenMarkovModel {
 					if (totalPathProbability > maxPathProbability){
 						maxPathProbability = totalPathProbability;
 						bestHit = tag;
-						System.out.println("setzt best hit auf " + tag);
 					}
 				}
+				double totalProbability =  maxPathProbability*emissionManager.getEmissionProbability(tag, token);
 				
-				System.out.println("i: " + i);
-				System.out.println("Best Hit " + bestHit);
-				System.out.println(transitionManager.getTagIndex(tag));
-				
-				System.out.println("Eintrag wird gemacht für tag " + tag);
-				probabilityTabular[transitionManager.getTagIndex(tag)][i] = maxPathProbability*emissionManager.getEmissionProbability(tag, token);
-				transitionManager.writeArrayAsCsv(probabilityTabular);
-				
+				if (totalProbability > maxProb){
+					maxProb = totalProbability;
+					assignedTags[i] = bestHit;
+				}
+				probabilityTabular[transitionManager.getTagIndex(tag)][i] = totalProbability;	
 			}
 		}
 		

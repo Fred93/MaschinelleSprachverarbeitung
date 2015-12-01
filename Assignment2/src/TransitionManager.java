@@ -1,24 +1,19 @@
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
-
-import javax.swing.text.html.HTML.Tag;
+import utils.CSVWriter;
 
 public class TransitionManager {
 	private Set<String> tagSet = new HashSet<String>();
 	private double[][] transitionProbabilities;
 	public final static String START = "start";
-	private List listTagSet;
-	private double lambda = 0.5;
+	private List<String> listTagSet;
+	private double lambda = 0;
 	
-	public TransitionManager(){
+	public TransitionManager(double lambda){
+		this.lambda = lambda;
 		tagSet.add(TransitionManager.START);
 	}
 	
@@ -53,8 +48,7 @@ public class TransitionManager {
 				transitionProbabilities[i][j] = (transitionCouter[i][j]*1.0+lambda)/(rowSum+lambda*tagSet.size());
 			}
 		}
-		
-		writeArrayAsCsv(transitionProbabilities);
+		CSVWriter.writeArrayAsCsv(transitionProbabilities, "emissionProbabilities.csv");
 	}
 	
 	public int getRowSum(int[] row){
@@ -82,49 +76,7 @@ public class TransitionManager {
 			}
 		}
 		System.out.println(transitionCounter);
-		writeArrayAsCsv(transitionCounter);
+		CSVWriter.writeArrayAsCsv(transitionCounter, "transitionCounter.csv");
 		return transitionCounter;
-	}
-	
-	public void writeArrayAsCsv(int[][]array){
-		try {
-			
-			System.out.println("Write csv...");
-			FileWriter writer = new FileWriter("transitionCounter.csv");			
-			for (int i = 0; i < array.length; i++) {
-				for (int j = 0; j < array[i].length; j++) {
-					writer.append(array[i][j] + "");
-					if (j != array[i].length-1){
-						writer.append(";");
-					}
-				}
-				writer.append("\n");
-			}
-		    writer.flush();
-		    writer.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-	
-	public void writeArrayAsCsv(double[][]array){
-		try {
-			
-			System.out.println("Write csv...");
-			FileWriter writer = new FileWriter("transitionProbabilities.csv");			
-			for (int i = 0; i < array.length; i++) {
-				for (int j = 0; j < array[i].length; j++) {
-					writer.append(array[i][j] + "");
-					if (j != array[i].length-1){
-						writer.append(";");
-					}
-				}
-				writer.append("\n");
-			}
-		    writer.flush();
-		    writer.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
 	}
 }
