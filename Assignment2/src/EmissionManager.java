@@ -31,8 +31,9 @@ public class EmissionManager {
 	public double getEmissionProbability(String tag, String term){
 		int pos1 = listTagSet.indexOf(tag);
 		int pos2 = listTermSet.indexOf(term);
+		//System.out.println("ind "+pos1 + " "+pos2);
 		return emissionProbabilities[pos1][pos2];
-	}
+		}
 	
 	public void calculateEmissionProbalilities(String[] strings){
 		//Initialize matrix
