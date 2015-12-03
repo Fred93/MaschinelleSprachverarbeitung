@@ -1,15 +1,12 @@
 import java.util.List;
+import java.util.Random;
 import java.util.StringTokenizer;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
+
 
 public class KfoldValidation {
 	private String[] strings;
-	private int[][] subsetIndices;
-	private String dataset;
 
-	
 	
 	public KfoldValidation(String[] strings){
 		this.strings = strings;
@@ -21,48 +18,87 @@ public class KfoldValidation {
 	public void validate(int k){
 		
 		
-		 //subsetIndices = new int[k][];
-		 for (int i =0; i<1; i++ ){
+		//ubsetIndices = new int[k][];
+		
+		
+		for (int i =0; i<1; i++ ){
 			 String[] forTest=new String[i+1];
-			 String[] forLearn=new String[k-i+1];
-			int indexLearn=(i+1)*(strings.length/k);
-			
-		forTest=Arrays.copyOfRange(strings, 0, indexLearn);
-		forLearn=Arrays.copyOfRange(strings, indexLearn, strings.length);
+			 String[] forLearn=new String[k-(i+1)];
+			 
+			 
+			//random indicies
+		 int ab=(i+1)*(strings.length/k);
+		 List<Integer> testIndicies = new ArrayList<Integer>();
+		 Random random = new Random();
+		 for (int a=0; a<ab;a++){
+		 int index = random.nextInt(strings.length);
+		 System.out.println("Index test "+index);
+		 testIndicies.add(index);
+		 forTest[a]=strings[index];
+		 }
+		 System.out.println("Indexes "+testIndicies);
+		 int a=0;
+		  for (int b=0; b<strings.length; b++)
+		  {if(!testIndicies.contains(b)){
+			  forLearn[a]=strings[b];
+			  a++;
+			  System.out.println(b);
+		  }
+		  }
+		// System.out.println(forTest[0]);
+		// System.out.println(forTest.length);
+		// System.out.println(forLearn.length);
+		 //subset
+		
+	
+
+		
 		HiddenMarkovModel tagger = new HiddenMarkovModel();
 		
 		tagger.findTags(forLearn);
 		tagger.trainModel(forLearn);
 		System.out.println(forLearn.length);
 		System.out.println(forTest.length);
-		System.out.println("Finished Model training for fold "+indexLearn);
+		
+		System.out.println("Finished Model training for fold "+(i+1));
 		
 		//Array of labeled strings
-	    String[] result= tagger.viterbi(Arrays.copyOfRange(forLearn, 0, 1));
+	    String[] result= tagger.viterbi(forTest);
+
+	    
 	    for (String t :result){
 	    	System.out.println(t);
 	    }
-		// double error= calculateErrors(result, forTest);
-		//System.out.println("Error: "+error);
+	    System.out.println(result.length);
+	   
+		double error= calculateErrors(result, forTest);
+		System.out.println("Error rate: "+error);
 
 		 }
 		
 	}
+
+	
 	public double calculateErrors(String[] predictedData, String[] realData){
-		int correct=0;
-		int incorrect=0;
+		
+	    
+		double incorrect=0;
 		int total=0;
              for (int i = 0; i<predictedData.length; i++){
             	     String[] pred=  convertTextToArray(predictedData[i]);
             	     String[] is=  convertTextToArray(realData[i]);
-            	     for (int a = 0; a<pred.length; i++){ 
-            	    	if(pred[a]==is[a]){
-            	    		correct++;
+            	     
+            	    System.out.println(pred.length);
+            	    System.out.println(is.length);
+            	     
+            	     for (int a = 0; a<pred.length; a++){ 
+            	    	if(pred[a].equals(is[a])){
+            	    	
             	    	} else {
             	    		incorrect++;
             	    	}
             	    	 total++;
-            	    	 
+            	    	 //System.out.println(a); 
             	     }
 
              }

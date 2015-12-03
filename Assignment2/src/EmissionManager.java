@@ -32,7 +32,11 @@ public class EmissionManager {
 		int pos1 = listTagSet.indexOf(tag);
 		int pos2 = listTermSet.indexOf(term);
 		//System.out.println("ind "+pos1 + " "+pos2);
+		if(!(pos2==-1)){
 		return emissionProbabilities[pos1][pos2];
+		//for unseen tokens, all tags emitt with equal prob
+		}else{return 0.00000000001;}
+		
 		}
 	
 	public void calculateEmissionProbalilities(String[] strings){
@@ -71,7 +75,7 @@ public class EmissionManager {
 		
 		
 		//Iterate over all Strings to count emissions
-		for (int i = 0; i < 1; i++) {
+		for (int i = 0; i < strings.length; i++) {
 			String text = strings[i];
 			StringTokenizer stringTokenizer = new StringTokenizer(text, " \t\n\r\f", false);
 		    while (stringTokenizer.hasMoreElements()) {

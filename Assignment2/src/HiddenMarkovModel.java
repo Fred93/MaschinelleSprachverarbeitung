@@ -5,8 +5,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.StringTokenizer;
 import utils.CSVWriter;
 
@@ -30,7 +28,8 @@ public class HiddenMarkovModel {
 	
 	public void findTags(String[] strings){
 		
-		for (int i = 0; i < 1; i++) {
+		for (int i = 0; i < strings.length; i++) {
+			System.out.println("Learning for "+i);
 			String string = strings[i];
 			StringTokenizer stringTokenizer = new StringTokenizer(string, " \t\n\r\f", false);
 		    while (stringTokenizer.hasMoreElements()) {
@@ -130,7 +129,7 @@ public class HiddenMarkovModel {
 		
 		CSVWriter.writeArrayAsCsv(probabilityTabular, "probabilityTabular.csv");
 		for (String string : assignedTags) {
-			System.out.println(string);
+		//	System.out.println(string);
 		}
 		
 		}
@@ -184,18 +183,10 @@ public class HiddenMarkovModel {
 					}
 				}
 				//emission - p das gegebenes Wort ist getagt mit jedem Tag
+				
 				double a = Math.log(emissionManager.getEmissionProbability(tag, token));
 				double totalProbability = normalizationParameter*(maxPathProbability+ a);
-				if (totalProbability==Double.POSITIVE_INFINITY|| totalProbability == Double.NEGATIVE_INFINITY){
-					
-					
-					
-					
-					System.out.println(totalProbability);
-					
-				}
-				
-				
+			
 				
 				
 				//System.out.println(totalProbability);
@@ -206,7 +197,7 @@ public class HiddenMarkovModel {
 				if (totalProbability > maxProb){
 					maxProb = totalProbability;
 					assignedTags[i] = bestHit;
-					System.out.println(bestHit);
+					//System.out.println(bestHit);
 				}
 				probabilityTabular[transitionManager.getTagIndex(tag)][i] = totalProbability;	
 			}
@@ -219,8 +210,11 @@ public class HiddenMarkovModel {
 		File[] files = tagger.readFiles(directory);
 		String[] strings = tagger.convertFilesToStrings(files);
 		
+		KfoldValidation kfoldVal = new KfoldValidation(Arrays.copyOfRange(strings, 0, 10));
+		kfoldVal.validate(10);
 		
 		
+		/*
 		String text = "The/NA mayor's/NA present/NA term/NA of/NA office/NA expires/NA Jan./NA 1/NA ./NA";
 		String[] input=new String[1];
 		input[0]=text;
@@ -244,8 +238,7 @@ public class HiddenMarkovModel {
 		}
 */
 		
-		KfoldValidation kfoldVal = new KfoldValidation(Arrays.copyOfRange(strings, 0, 10));
-		kfoldVal.validate(10);
+		
 		
 	/*
 		tagger.findTags(strings);

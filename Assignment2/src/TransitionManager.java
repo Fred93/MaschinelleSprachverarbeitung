@@ -18,7 +18,7 @@ public class TransitionManager {
 	}
 	
 	public void addTag(String s){
-		System.out.println(s);
+		//System.out.println(s);
 		tagSet.add(s);
 		
 	}
@@ -71,7 +71,7 @@ public class TransitionManager {
 		
 		//Iterate over all Strings to count transitions
 		String previousTag = TransitionManager.START;
-		for (int i = 0; i < 1; i++) {
+		for (int i = 0; i < strings.length; i++) {
 			String text = strings[i];
 			StringTokenizer stringTokenizer = new StringTokenizer(text, " \t\n\r\f", false);
 		    while (stringTokenizer.hasMoreElements()) {
