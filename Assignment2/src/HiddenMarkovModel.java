@@ -29,7 +29,7 @@ public class HiddenMarkovModel {
 	public void findTags(String[] strings){
 		
 		for (int i = 0; i < strings.length; i++) {
-			System.out.println("Learning for "+i);
+			//System.out.println("Learning for "+i);
 			String string = strings[i];
 			StringTokenizer stringTokenizer = new StringTokenizer(string, " \t\n\r\f", false);
 		    while (stringTokenizer.hasMoreElements()) {
@@ -113,7 +113,7 @@ public class HiddenMarkovModel {
 		
 		normalizationParameter = (1/(length/2));
 		
-		System.out.println("Norm.Parameter " + normalizationParameter);
+		//System.out.println("Norm.Parameter " + normalizationParameter);
 		
 		String[] tags = new String[tokens.length];
 		assignedTags = tags;

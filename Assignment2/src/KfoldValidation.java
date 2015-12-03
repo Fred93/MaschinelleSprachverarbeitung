@@ -21,55 +21,53 @@ public class KfoldValidation {
 		//ubsetIndices = new int[k][];
 		
 		
-		for (int i =0; i<1; i++ ){
-			 String[] forTest=new String[i+1];
-			 String[] forLearn=new String[k-(i+1)];
+		for (int i =0; i<k; i++ ){
+			 String[] forTest=new String[1];
+			 String[] forLearn=new String[k-1];
 			 
 			 
 			//random indicies
-		 int ab=(i+1)*(strings.length/k);
+		 int ab=strings.length/k;
 		 List<Integer> testIndicies = new ArrayList<Integer>();
 		 Random random = new Random();
 		 for (int a=0; a<ab;a++){
 		 int index = random.nextInt(strings.length);
-		 System.out.println("Index test "+index);
+		 //System.out.println("Index test "+index);
 		 testIndicies.add(index);
 		 forTest[a]=strings[index];
 		 }
-		 System.out.println("Indexes "+testIndicies);
+		 //System.out.println("Indexes "+testIndicies);
 		 int a=0;
 		  for (int b=0; b<strings.length; b++)
 		  {if(!testIndicies.contains(b)){
 			  forLearn[a]=strings[b];
 			  a++;
-			  System.out.println(b);
+			 // System.out.println(b);
 		  }
 		  }
 		// System.out.println(forTest[0]);
 		// System.out.println(forTest.length);
 		// System.out.println(forLearn.length);
 		 //subset
-		
-	
 
 		
 		HiddenMarkovModel tagger = new HiddenMarkovModel();
 		
 		tagger.findTags(forLearn);
 		tagger.trainModel(forLearn);
-		System.out.println(forLearn.length);
-		System.out.println(forTest.length);
+		//System.out.println(forLearn.length);
+		//System.out.println(forTest.length);
 		
 		System.out.println("Finished Model training for fold "+(i+1));
 		
 		//Array of labeled strings
 	    String[] result= tagger.viterbi(forTest);
 
-	    
+	
 	    for (String t :result){
 	    	System.out.println(t);
 	    }
-	    System.out.println(result.length);
+	    //System.out.println(result.length);
 	   
 		double error= calculateErrors(result, forTest);
 		System.out.println("Error rate: "+error);
