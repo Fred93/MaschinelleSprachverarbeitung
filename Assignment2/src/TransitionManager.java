@@ -18,7 +18,9 @@ public class TransitionManager {
 	}
 	
 	public void addTag(String s){
+		System.out.println(s);
 		tagSet.add(s);
+		
 	}
 	
 	public Set<String> getTagSet(){
@@ -37,12 +39,16 @@ public class TransitionManager {
 		//Initialize matrix
 		transitionProbabilities = new double[tagSet.size()][tagSet.size()];
 		
+		//System.out.println("Set "+tagSet);
 		listTagSet = Arrays.asList(tagSet.toArray(new String[tagSet.size()]));
+		//System.out.print("List :"+listTagSet);
+		
 		
 		int[][] transitionCouter = countTransitions(strings);
 		
 		for (int i = 0; i < transitionCouter.length; i++) {
 			int rowSum = getRowSum(transitionCouter[i]);
+			//System.out.println(rowSum);
 			for (int j = 0; j < transitionCouter.length; j++) {
 				//Simple  smoothing
 				transitionProbabilities[i][j] = (transitionCouter[i][j]*1.0+lambda)/(rowSum+lambda*tagSet.size());
@@ -69,14 +75,17 @@ public class TransitionManager {
 			String text = strings[i];
 			StringTokenizer stringTokenizer = new StringTokenizer(text, " \t\n\r\f", false);
 		    while (stringTokenizer.hasMoreElements()) {
+		    	//System.out.println(previousTag);
 				String token = (String) stringTokenizer.nextElement();
 				String tag = token.split("/")[1];
+				//System.out.println(listTagSet.indexOf("start"));
 				transitionCounter[listTagSet.indexOf(previousTag)][listTagSet.indexOf(tag)]++;
 				previousTag = tag;
 			}
 		}
 		System.out.println(transitionCounter);
 		CSVWriter.writeArrayAsCsv(transitionCounter, "transitionCounter.csv");
+		
 		return transitionCounter;
 	}
 }

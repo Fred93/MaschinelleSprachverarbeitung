@@ -4,6 +4,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.StringTokenizer;
 import utils.CSVWriter;
 
@@ -25,14 +27,20 @@ public class HiddenMarkovModel {
 	}
 	
 	public void findTags(String[] strings){
+		
 		for (int i = 0; i < 1; i++) {
 			String string = strings[i];
 			StringTokenizer stringTokenizer = new StringTokenizer(string, " \t\n\r\f", false);
 		    while (stringTokenizer.hasMoreElements()) {
 				String token = (String) stringTokenizer.nextElement();
 				String[] res = token.split("/");
+				
+				
 				transitionManager.addTag(res[1]);
+				//System.out.println("Sent to transition manager, tag of " +res[0]+ " is " + res[1]);
+				
 				emissionManager.addTerm(res[0]);
+				//System.out.println("Sent to emission manager " + res[0]);
 			}
 		}
 	    /*for (String tag: transitionManager.getTagSet()) {
@@ -45,6 +53,8 @@ public class HiddenMarkovModel {
 		emissionManager.setTagSet(transitionManager.getTagSet());
 		emissionManager.calculateEmissionProbalilities(strings);;
 	}
+	
+	
 	
 	public String[] convertFilesToStrings(File[] files){
 		String[] strings = new String[files.length];
@@ -70,7 +80,7 @@ public class HiddenMarkovModel {
 	}
 	
 	public String[] convertTextToArray(String s){
-		ArrayList<String> strings = new ArrayList<>();
+		ArrayList<String> strings = new ArrayList<String>();
 		StringTokenizer stringTokenizer = new StringTokenizer(s, " \t\n\r\f", false);
 		while (stringTokenizer.hasMoreElements()) {
 			strings.add((String) stringTokenizer.nextElement());
@@ -78,16 +88,44 @@ public class HiddenMarkovModel {
 		return strings.toArray(new String[strings.size()]);
 	}
 	
-	public void viterbi(String s){
+	public String prepareInput(String input) {
+		String result="";
+			StringTokenizer stringTokenizer = new StringTokenizer(input, " \t\n\r\f", false);
+		    while (stringTokenizer.hasMoreElements()) {
+				String token = (String) stringTokenizer.nextElement();
+				String[] res = token.split("/");
+				result = result+" "+res[0];
+		    }
+		return result;
+		
+	}
+	
+	
+	public String[] viterbi(String[] data){
+		String[] answer = new String [data.length];
+		for (int a=0; a<data.length;a++){
+			
+		String s= data[a];
 		String[] tokens = convertTextToArray(s);
 		String[] tags = new String[tokens.length];
 		assignedTags = tags;
 		probabilityTabular = new double[transitionManager.getTagSet().size()][tokens.length];
 		viterbiStep(tokens, tokens.length-1);
+		String rep="";
+		for (int i=0; i<tokens.length; i++) {
+			rep= rep+" "+tokens[i] +"/"+assignedTags[i];
+	    }
+		answer[a]=rep;
+		
+		
 		CSVWriter.writeArrayAsCsv(probabilityTabular, "probabilityTabular.csv");
 		for (String string : assignedTags) {
 			System.out.println(string);
 		}
+		
+		}
+		return answer;
+		
 	}
 	
 	public void viterbiStep(String[] tokens, int i){
@@ -98,9 +136,10 @@ public class HiddenMarkovModel {
 			//return 1;
 		}else{
 			
-			System.out.println("Vitebi step for: " + tokens[i]);
+		
 			String token = tokens[i];
 			viterbiStep(tokens, i-1);
+			System.out.println("Vitebi step for: " + tokens[i]);
 			/*String previousTag;
 			if (i == 0){
 				previousTag = TransitionManager.START;
@@ -110,6 +149,7 @@ public class HiddenMarkovModel {
 			double maxPathProbability = 0;
 			double maxProb = 0;
 			for (String tag : transitionManager.getTagSet()) {
+				//System.out.println("Tag" +tag);
 				maxPathProbability = 0;
 				bestHit = "NA";
 				for (String previousTag : transitionManager.getTagSet()) {
@@ -120,6 +160,7 @@ public class HiddenMarkovModel {
 					
 					double transition = transitionManager.getTransitionProbability(previousTag, tag);
 					double totalPathProbability = maxPrevious * transition;
+					
 					//Look for maximal Path Prob. 
 					if (totalPathProbability > maxPathProbability){
 						maxPathProbability = totalPathProbability;
@@ -131,11 +172,11 @@ public class HiddenMarkovModel {
 				if (totalProbability > maxProb){
 					maxProb = totalProbability;
 					assignedTags[i] = bestHit;
+					System.out.println("BestHit " +bestHit);
 				}
 				probabilityTabular[transitionManager.getTagIndex(tag)][i] = totalProbability;	
 			}
 		}
-		
 	}
 
 	public static void main(String[] args) {
@@ -143,11 +184,25 @@ public class HiddenMarkovModel {
 		HiddenMarkovModel tagger = new HiddenMarkovModel();
 		File[] files = tagger.readFiles(directory);
 		String[] strings = tagger.convertFilesToStrings(files);
+		
+		
+		
+	
 		tagger.findTags(strings);
 		tagger.trainModel(strings);
 		System.out.println("Finished Model training");
-		String text = "The mayor's present term of office expires Jan. 1 .";
-		tagger.viterbi(text);
+		
+		
+		
+		String text = "The/NA mayor's/NA present/NA term/NA of/NA office/NA expires/NA Jan./NA 1/NA ./NA";
+		String[] input=new String[1];
+		input[0]=tagger.prepareInput(text);
+		
+		
+		String[] ans= tagger.viterbi(input);
+		for(String st :ans){
+			System.out.println(st);
+		}
 		
 	}
 

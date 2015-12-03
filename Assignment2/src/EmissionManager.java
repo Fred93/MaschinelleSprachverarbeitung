@@ -42,6 +42,8 @@ public class EmissionManager {
 		listTermSet = Arrays.asList(termSet.toArray(new String[termSet.size()]));
 		
 		int[][] emissionCounter = countEmissions(strings);
+		//System.out.println("Emission counter " + emissionCounter[10].length);
+		
 		
 		for (int i = 0; i < emissionCounter.length; i++) {
 			int rowSum = getRowSum(emissionCounter[i]);
