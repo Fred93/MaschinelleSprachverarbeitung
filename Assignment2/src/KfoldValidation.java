@@ -6,28 +6,21 @@ import java.util.ArrayList;
 
 public class KfoldValidation {
 	private String[] strings;
+	private Double[] error;
 
 	
 	public KfoldValidation(String[] strings){
 		this.strings = strings;
-	
-		
-		
 	}
 	
 	public void validate(int k){
-		
-		
-		//ubsetIndices = new int[k][];
-		
-		
+		error = new Double[k];
 		for (int i =0; i<k; i++ ){
-			 String[] forTest=new String[1];
-			 String[] forLearn=new String[k-1];
-			 
-			 
+			 int ab=strings.length/k;
+			 String[] forTest=new String[ab];
+			 String[] forLearn=new String[k-ab];
 			//random indicies
-		 int ab=strings.length/k;
+		
 		 List<Integer> testIndicies = new ArrayList<Integer>();
 		 Random random = new Random();
 		 for (int a=0; a<ab;a++){
@@ -69,14 +62,22 @@ public class KfoldValidation {
 	    }
 	    //System.out.println(result.length);
 	   
-		double error= calculateErrors(result, forTest);
-		System.out.println("Error rate: "+error);
-
+        error[i]=calculateErrors(result, forTest);
+		System.out.println("Error rate: "+error[i]);
 		 }
+		int n=0;
+		double meanError=0;
+		while(n<k)
+		{
+		meanError=meanError+error[n];
+		n++;
+		}
+		meanError = meanError/k;
+		System.out.println("Mean Error over "+k+"-fold cross validation is "+meanError);
+		
 		
 	}
 
-	
 	public double calculateErrors(String[] predictedData, String[] realData){
 		
 	    
