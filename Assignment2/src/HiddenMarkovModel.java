@@ -14,16 +14,11 @@ public class HiddenMarkovModel {
 	private String[] assignedTags;
 	private double[][] probabilityTabular;
 	private double normalizationParameter;
+	public double kValerrorRate;
 	
 	public HiddenMarkovModel(){
 		transitionManager = new TransitionManager(0.1);
 		emissionManager = new EmissionManager(0.1);
-	}
-	
-	public File[] readFiles(String directory){
-		File dir = new File(directory);
-		File[] files = dir.listFiles();
-		return files;
 	}
 	
 	public void findTags(String[] strings){
@@ -57,28 +52,7 @@ public class HiddenMarkovModel {
 	
 	
 	
-	public String[] convertFilesToStrings(File[] files){
-		String[] strings = new String[files.length];
-	    FileInputStream fin;
-		try {
-			for (int i = 0; i < strings.length; i++) {
-				File f = files[i];
-				fin = new FileInputStream(f);
-				byte[] buffer = new byte[(int) f.length()];
-			    new DataInputStream(fin).readFully(buffer);
-			    fin.close();
-			    String s = new String(buffer, "UTF-8");
-			    strings[i] = s;
-			}
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return strings;
-	}
+	
 	
 	public String[] convertTextToArray(String s){
 		ArrayList<String> strings = new ArrayList<String>();
@@ -206,13 +180,48 @@ public class HiddenMarkovModel {
 
 	public static void main(String[] args) {
 		String directory = "brown_learn";
-		HiddenMarkovModel tagger = new HiddenMarkovModel();
-		File[] files = tagger.readFiles(directory);
-		String[] strings = tagger.convertFilesToStrings(files);
+		//Helper helper = new Helper();
+		//statische Methoden
+		File[] files = Helper.readFiles(directory);
+		String[] strings = Helper.convertFilesToStrings(files);
 		
 		KfoldValidation kfoldVal = new KfoldValidation(Arrays.copyOfRange(strings, 0, 10));
-		kfoldVal.validate(10);
 		
+		HiddenMarkovModel bestModel=kfoldVal.validate(10);
+		
+		//found best model
+		
+		//if (args.length>0){
+        String directoryAnalysis = "brown_test";
+		
+		File[] filesToAnalyse = Helper.readFiles(directoryAnalysis);
+		String[] stringsToAnalyse = Helper.convertFilesToStrings(filesToAnalyse);
+
+		//evaluate the final real data
+		System.out.println("Analysing real data");
+		String[] result=bestModel.viterbi(stringsToAnalyse);
+		 for (String t :result){
+		    	System.out.println(t);
+		    }
+		
+		 for (int i=0; i<result.length; i++){
+		 try {
+			Helper.writeResultstoFiles(result[i], directoryAnalysis, filesToAnalyse[i].getName());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		 
+		 }
+		 
+        /*
+		}else{
+			System.out.println("Please spacify directory as input parameter");
+		}
+		 */
+		 
+		 
+		 
 		
 		/*
 		String text = "The/NA mayor's/NA present/NA term/NA of/NA office/NA expires/NA Jan./NA 1/NA ./NA";
@@ -221,37 +230,6 @@ public class HiddenMarkovModel {
 		
 		/*tagger.findTags(Arrays.copyOfRange(strings, 0, 1));
 		tagger.trainModel(Arrays.copyOfRange(strings, 0, 1));
-		
-		String[] ans= tagger.viterbi(Arrays.copyOfRange(strings, 0, 1));
-		for(String st :ans){
-			System.out.println(st);
-		}
-		*/
-		
-		/*tagger.findTags(strings);
-		tagger.trainModel(strings);
-		System.out.println("Finished Model training");
-		
-		String[] ans= tagger.viterbi(input);
-		for(String st :ans){
-			System.out.println(st);
-		}
-*/
-		
-		
-		
-	/*
-		tagger.findTags(strings);
-		tagger.trainModel(strings);
-		System.out.println("Finished Model training");
-
-		String text = "The/NA mayor's/NA present/NA term/NA of/NA office/NA expires/NA Jan./NA 1/NA ./NA";
-		String[] input=new String[1];
-		input[0]=tagger.prepareInput(text);
-		String[] ans= tagger.viterbi(input);
-		for(String st :ans){
-			System.out.println(st);
-		}
 		*/
 		
 		

@@ -1,6 +1,7 @@
 import java.util.List;
 import java.util.Random;
 import java.util.StringTokenizer;
+import java.io.File;
 import java.util.ArrayList;
 
 
@@ -13,7 +14,9 @@ public class KfoldValidation {
 		this.strings = strings;
 	}
 	
-	public void validate(int k){
+	public HiddenMarkovModel validate(int k){
+		HiddenMarkovModel bestModel =null;
+		
 		error = new Double[k];
 		for (int i =0; i<k; i++ ){
 			 int ab=strings.length/k;
@@ -46,6 +49,8 @@ public class KfoldValidation {
 		
 		HiddenMarkovModel tagger = new HiddenMarkovModel();
 		
+		
+		
 		tagger.findTags(forLearn);
 		tagger.trainModel(forLearn);
 		//System.out.println(forLearn.length);
@@ -63,18 +68,37 @@ public class KfoldValidation {
 	    //System.out.println(result.length);
 	   
         error[i]=calculateErrors(result, forTest);
+        tagger.kValerrorRate=error[i];
+        if (i==0){
+			bestModel=tagger;
+		}
+        
+        //find best Model
+        if(i>0 && tagger.kValerrorRate<bestModel.kValerrorRate){
+        	bestModel=tagger;
+        	System.out.println("Current best model is model of the fold "+(i+1));
+        }
+        
 		System.out.println("Error rate: "+error[i]);
-		 }
+		
+		
+		
+   }
 		int n=0;
 		double meanError=0;
+		
 		while(n<k)
 		{
 		meanError=meanError+error[n];
 		n++;
 		}
 		meanError = meanError/k;
-		System.out.println("Mean Error over "+k+"-fold cross validation is "+meanError);
 		
+		
+		System.out.println("Feinisched valdation");
+		System.out.println("Mean Error over "+k+"-fold cross validation is "+meanError);
+		System.out.println("Best model with error "+bestModel.kValerrorRate);
+		return bestModel;
 		
 	}
 
@@ -116,6 +140,12 @@ public class KfoldValidation {
 		return strings.toArray(new String[strings.size()]);
 	}
 	
+	
+	public File[] readFiles(String directory){
+		File dir = new File(directory);
+		File[] files = dir.listFiles();
+		return files;
+	}
 	
 	
 
