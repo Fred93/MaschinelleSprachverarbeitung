@@ -5,6 +5,8 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.StringTokenizer;
 
 public class Helper {
 	
@@ -58,6 +60,14 @@ public class Helper {
 		
 	}
 	
+	public static String[] convertTextToArray(String s){
+		ArrayList<String> strings = new ArrayList<String>();
+		StringTokenizer stringTokenizer = new StringTokenizer(s, " \t\n\r\f", false);
+		while (stringTokenizer.hasMoreElements()) {
+			strings.add((String) stringTokenizer.nextElement());
+		}
+		return strings.toArray(new String[strings.size()]);
+	}
 	
 	
 	

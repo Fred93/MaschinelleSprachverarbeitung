@@ -143,6 +143,7 @@ public class HiddenMarkovModel {
 					}
 					
 					double transition = transitionManager.getTransitionProbability(previousTag, tag);
+					
 					double totalPathProbability = maxPrevious + Math.log(transition);
 					
 					
@@ -159,7 +160,9 @@ public class HiddenMarkovModel {
 				//emission - p das gegebenes Wort ist getagt mit jedem Tag
 				
 				double a = Math.log(emissionManager.getEmissionProbability(tag, token));
-				double totalProbability = normalizationParameter*(maxPathProbability+ a);
+				
+				
+				double totalProbability = (maxPathProbability+ a);
 			
 				
 				
@@ -185,9 +188,12 @@ public class HiddenMarkovModel {
 		File[] files = Helper.readFiles(directory);
 		String[] strings = Helper.convertFilesToStrings(files);
 		
-		KfoldValidation kfoldVal = new KfoldValidation(Arrays.copyOfRange(strings, 0, 21));
+		KfoldValidation kfoldVal = new KfoldValidation(Arrays.copyOfRange(strings, 0, 10));
 		
 		HiddenMarkovModel bestModel=kfoldVal.validate(10);
+		
+		
+		
 		
 		//found best model
 		

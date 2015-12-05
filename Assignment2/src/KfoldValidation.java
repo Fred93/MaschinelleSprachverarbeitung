@@ -115,8 +115,8 @@ public class KfoldValidation {
 		double incorrect=0;
 		int total=0;
              for (int i = 0; i<predictedData.length; i++){
-            	     String[] pred=  convertTextToArray(predictedData[i]);
-            	     String[] is=  convertTextToArray(realData[i]);
+            	     String[] pred=  Helper.convertTextToArray(predictedData[i]);
+            	     String[] is=  Helper.convertTextToArray(realData[i]);
             	     
             	    System.out.println(pred.length);
             	    System.out.println(is.length);
@@ -138,21 +138,9 @@ public class KfoldValidation {
 		return incorrect/total;
 		
 	}
-	public String[] convertTextToArray(String s){
-		ArrayList<String> strings = new ArrayList<String>();
-		StringTokenizer stringTokenizer = new StringTokenizer(s, " \t\n\r\f", false);
-		while (stringTokenizer.hasMoreElements()) {
-			strings.add((String) stringTokenizer.nextElement());
-		}
-		return strings.toArray(new String[strings.size()]);
-	}
 	
 	
-	public File[] readFiles(String directory){
-		File dir = new File(directory);
-		File[] files = dir.listFiles();
-		return files;
-	}
+	
 	
 	
 
