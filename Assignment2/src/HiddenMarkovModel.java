@@ -185,7 +185,7 @@ public class HiddenMarkovModel {
 		File[] files = Helper.readFiles(directory);
 		String[] strings = Helper.convertFilesToStrings(files);
 		
-		KfoldValidation kfoldVal = new KfoldValidation(Arrays.copyOfRange(strings, 0, 10));
+		KfoldValidation kfoldVal = new KfoldValidation(Arrays.copyOfRange(strings, 0, 21));
 		
 		HiddenMarkovModel bestModel=kfoldVal.validate(10);
 		
@@ -198,13 +198,13 @@ public class HiddenMarkovModel {
 		String[] stringsToAnalyse = Helper.convertFilesToStrings(filesToAnalyse);
 
 		//evaluate the final real data
-		System.out.println("Analysing real data");
+		System.out.println("Analysing real data in directory "+directoryAnalysis);
 		String[] result=bestModel.viterbi(stringsToAnalyse);
 		 for (String t :result){
 		    	System.out.println(t);
 		    }
 		
-		 for (int i=0; i<result.length; i++){
+		/* for (int i=0; i<result.length; i++){
 		 try {
 			Helper.writeResultstoFiles(result[i], directoryAnalysis, filesToAnalyse[i].getName());
 		} catch (IOException e) {

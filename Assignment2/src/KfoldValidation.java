@@ -18,27 +18,34 @@ public class KfoldValidation {
 		HiddenMarkovModel bestModel =null;
 		
 		error = new Double[k];
+		System.out.println(strings.length);
+		 int ab=strings.length/k;
+		System.out.println(ab);
+		 
 		for (int i =0; i<k; i++ ){
-			 int ab=strings.length/k;
+		
+			 
 			 String[] forTest=new String[ab];
-			 String[] forLearn=new String[k-ab];
-			//random indicies
+			 String[] forLearn=new String[strings.length-ab];
+			//random index for testset
 		
 		 List<Integer> testIndicies = new ArrayList<Integer>();
 		 Random random = new Random();
 		 for (int a=0; a<ab;a++){
 		 int index = random.nextInt(strings.length);
+		 
 		 //System.out.println("Index test "+index);
 		 testIndicies.add(index);
 		 forTest[a]=strings[index];
 		 }
 		 //System.out.println("Indexes "+testIndicies);
+		 
 		 int a=0;
 		  for (int b=0; b<strings.length; b++)
 		  {if(!testIndicies.contains(b)){
 			  forLearn[a]=strings[b];
 			  a++;
-			 // System.out.println(b);
+			// System.out.println(b);
 		  }
 		  }
 		// System.out.println(forTest[0]);
