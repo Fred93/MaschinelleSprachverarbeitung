@@ -18,36 +18,79 @@ public class KfoldValidation {
 		HiddenMarkovModel bestModel =null;
 		
 		error = new Double[k];
-		System.out.println(strings.length);
-		 int ab=strings.length/k;
-		System.out.println(ab);
+		//System.out.println(strings.length);
+		 int setSize=strings.length/k;
+		//System.out.println(setSize);
+		
+		 Random random = new Random();
+		 
+		 
+		 int[][] testIndicies = new int [k][setSize];
+		 
+		 List<Integer>IndicieOfStrings=new ArrayList<Integer>();
+		 //List of possible Indexes
+		 for (int a=0; a<strings.length;a++){
+			 IndicieOfStrings.add(a);
+		 }
+     
+		 
+		 /*for (int a=0; a<k;a++){
+			 for (int bb=0; bb<setSize; bb++){
+			 int indexOfIndex = random.nextInt(IndicieOfStrings.size());
+			 //System.out.println("Random "+indexOfIndex);
+			 
+			 testIndicies[a][bb] = IndicieOfStrings.get(indexOfIndex);
+			 //System.out.println(testIndicies[a][bb]);
+			 
+			 //lösche bentzte Indicies
+			 IndicieOfStrings.remove(indexOfIndex);
+			 //System.out.println("Index test "+index);
+			 //testIndicies.add(index);
+			 
+			 }
+			 }*/
+		 
 		 
 		for (int i =0; i<k; i++ ){
-		
+			
+			//set testindeizies for current fold
+			 for (int bb=0; bb<setSize; bb++){
+				 int indexOfIndex = random.nextInt(IndicieOfStrings.size());
+				 //System.out.println("Random "+indexOfIndex);
+				 
+				 testIndicies[i][bb] = IndicieOfStrings.get(indexOfIndex);
+				 //System.out.println(testIndicies[a][bb]);
+				 
+				 //lösche bentzte Indicies
+				 IndicieOfStrings.remove(indexOfIndex);
+				 //System.out.println("Index test "+index);
+				 //testIndicies.add(index);
+				 }
+			
+			
+			 String[] forTest=new String[setSize];
+			 String[] forLearn=new String[strings.length-setSize];
 			 
-			 String[] forTest=new String[ab];
-			 String[] forLearn=new String[strings.length-ab];
-			//random index for testset
+			 //Liste der benutzten Indizies für Testset
+			 List<Integer>listOfTestIndicies=new ArrayList<Integer>();
+			 
+			 
+			 for (int a=0; a<testIndicies[i].length;a++){
+				 forTest[a]=strings[testIndicies[i][a]];
+				 listOfTestIndicies.add(testIndicies[i][a]);
+			 }
+			 
+			 
+			 int a=0;
+			  for (int b=0; b<strings.length; b++)
+			  {if(!listOfTestIndicies.contains(b)){
+				  forLearn[a]=strings[b];
+				  a++;
+				// System.out.println(b);
+			  }
+			  }
 		
-		 List<Integer> testIndicies = new ArrayList<Integer>();
-		 Random random = new Random();
-		 for (int a=0; a<ab;a++){
-		 int index = random.nextInt(strings.length);
-		 
-		 //System.out.println("Index test "+index);
-		 testIndicies.add(index);
-		 forTest[a]=strings[index];
-		 }
-		 //System.out.println("Indexes "+testIndicies);
-		 
-		 int a=0;
-		  for (int b=0; b<strings.length; b++)
-		  {if(!testIndicies.contains(b)){
-			  forLearn[a]=strings[b];
-			  a++;
-			// System.out.println(b);
-		  }
-		  }
+			
 		// System.out.println(forTest[0]);
 		// System.out.println(forTest.length);
 		// System.out.println(forLearn.length);

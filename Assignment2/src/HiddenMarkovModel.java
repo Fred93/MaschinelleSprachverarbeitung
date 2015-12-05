@@ -188,7 +188,7 @@ public class HiddenMarkovModel {
 		File[] files = Helper.readFiles(directory);
 		String[] strings = Helper.convertFilesToStrings(files);
 		
-		KfoldValidation kfoldVal = new KfoldValidation(Arrays.copyOfRange(strings, 0, 10));
+		KfoldValidation kfoldVal = new KfoldValidation(Arrays.copyOfRange(strings, 0, 20));
 		
 		HiddenMarkovModel bestModel=kfoldVal.validate(10);
 		
