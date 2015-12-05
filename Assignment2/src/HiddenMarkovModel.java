@@ -1,16 +1,13 @@
-import java.io.DataInputStream;
+
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.StringTokenizer;
 import utils.CSVWriter;
 
 public class HiddenMarkovModel {
-	private TransitionManager transitionManager;
-	private EmissionManager emissionManager;
+	public TransitionManager transitionManager;
+	public EmissionManager emissionManager;
 	private String[] assignedTags;
 	private double[][] probabilityTabular;
 	private double normalizationParameter;
@@ -188,14 +185,18 @@ public class HiddenMarkovModel {
 		File[] files = Helper.readFiles(directory);
 		String[] strings = Helper.convertFilesToStrings(files);
 		
-		KfoldValidation kfoldVal = new KfoldValidation(Arrays.copyOfRange(strings, 0, 20));
+		KfoldValidation kfoldVal = new KfoldValidation(strings);
 		
+		//Validate mit k=10
 		HiddenMarkovModel bestModel=kfoldVal.validate(10);
-		
-		
-		
-		
 		//found best model
+		
+		
+		
+		//schreibe die emission- und transmission Metrizen in die CSS
+		Helper.writeProbabilities(bestModel.transitionManager.transitionProbabilities, bestModel.emissionManager.emissionProbabilities);
+		
+		
 		
 		//if (args.length>0){
         String directoryAnalysis = "brown_test";

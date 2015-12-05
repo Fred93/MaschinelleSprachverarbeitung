@@ -9,7 +9,7 @@ import utils.CSVWriter;
 public class EmissionManager {
 	private Set<String> tagSet = new HashSet<String>();
 	private Set<String> termSet = new HashSet<String>();
-	private double[][] emissionProbabilities;
+	public double[][] emissionProbabilities;
 	public final static String START = "start";
 	private List<String> listTagSet;
 	private List<String> listTermSet;

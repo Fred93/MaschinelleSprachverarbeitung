@@ -7,7 +7,7 @@ import utils.CSVWriter;
 
 public class TransitionManager {
 	private Set<String> tagSet = new HashSet<String>();
-	private double[][] transitionProbabilities;
+	public double[][] transitionProbabilities;
 	public final static String START = "start";
 	private List<String> listTagSet;
 	private double lambda = 0;
@@ -54,6 +54,7 @@ public class TransitionManager {
 				transitionProbabilities[i][j] = (transitionCouter[i][j]*1.0+lambda)/(rowSum+lambda*tagSet.size());
 			}
 		}
+		
 		CSVWriter.writeArrayAsCsv(transitionProbabilities, "emissionProbabilities.csv");
 	}
 	

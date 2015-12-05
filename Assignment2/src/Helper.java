@@ -8,6 +8,10 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
 
+import utils.CSVWriter;
+
+
+
 public class Helper {
 	
 	private static PrintWriter writer;
@@ -68,6 +72,13 @@ public class Helper {
 		}
 		return strings.toArray(new String[strings.size()]);
 	}
+	
+	public static void writeProbabilities(double[][] transitionProbabilities, double[][] emissionmanager ){
+		CSVWriter.writeArrayAsCsv(transitionProbabilities, "Probabilities/FinalTransitionProbabilities.csv");
+		CSVWriter.writeArrayAsCsv(emissionmanager, "Probabilities/FinalEmisionProbabilities.csv");
+	}
+	
+	
 	
 	
 	

@@ -18,9 +18,9 @@ public class KfoldValidation {
 		HiddenMarkovModel bestModel =null;
 		
 		error = new Double[k];
-		//System.out.println(strings.length);
+		System.out.println(strings.length);
 		 int setSize=strings.length/k;
-		//System.out.println(setSize);
+		System.out.println(setSize);
 		
 		 Random random = new Random();
 		 
@@ -56,7 +56,7 @@ public class KfoldValidation {
 			//set testindeizies for current fold
 			 for (int bb=0; bb<setSize; bb++){
 				 int indexOfIndex = random.nextInt(IndicieOfStrings.size());
-				 //System.out.println("Random "+indexOfIndex);
+				 System.out.println("Random "+indexOfIndex);
 				 
 				 testIndicies[i][bb] = IndicieOfStrings.get(indexOfIndex);
 				 //System.out.println(testIndicies[a][bb]);
@@ -93,15 +93,16 @@ public class KfoldValidation {
 			
 		// System.out.println(forTest[0]);
 		// System.out.println(forTest.length);
-		// System.out.println(forLearn.length);
+		 System.out.println("Zum Lernen Länge" + forLearn.length);
 		 //subset
 
 		
 		HiddenMarkovModel tagger = new HiddenMarkovModel();
 		
 		
-		
+		System.out.println("Suche tags");
 		tagger.findTags(forLearn);
+		System.out.println("Lerne");
 		tagger.trainModel(forLearn);
 		//System.out.println(forLearn.length);
 		//System.out.println(forTest.length);
