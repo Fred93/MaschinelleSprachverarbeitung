@@ -2,15 +2,11 @@ import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
-
 import utils.CSVWriter;
-
-
 
 public class Helper {
 	
@@ -54,8 +50,6 @@ public class Helper {
 
 
 	public static void writeResultstoFiles(String result, String directory, String fileName) throws IOException {
-		// TODO Auto-generated method stub
-
 			writer = new PrintWriter(directory+"/"+"ORG_"+fileName);
 			writer.print(result);
 			
@@ -77,10 +71,4 @@ public class Helper {
 		CSVWriter.writeArrayAsCsv(transitionProbabilities, "Probabilities/FinalTransitionProbabilities.csv");
 		CSVWriter.writeArrayAsCsv(emissionmanager, "Probabilities/FinalEmisionProbabilities.csv");
 	}
-	
-	
-	
-	
-	
-
 }

@@ -13,8 +13,8 @@ public class HiddenMarkovModel {
 	public double kValerrorRate;
 	
 	public HiddenMarkovModel(){
-		transitionManager = new TransitionManager(0.1);
-		emissionManager = new EmissionManager(0.1);
+		transitionManager = new TransitionManager(0.5);
+		emissionManager = new EmissionManager(0.08);
 	}
 	
 	public void findTags(String[] strings){
@@ -184,7 +184,7 @@ public class HiddenMarkovModel {
 		File[] files = Helper.readFiles(directory);
 		String[] strings = Helper.convertFilesToStrings(files);
 		
-		KfoldValidation kfoldVal = new KfoldValidation(Arrays.copyOfRange(strings, 0, 30));
+		KfoldValidation kfoldVal = new KfoldValidation(strings);
 		
 		//Validate mit k=10
 		HiddenMarkovModel bestModel=kfoldVal.validate(10);
