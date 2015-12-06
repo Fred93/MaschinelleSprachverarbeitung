@@ -35,7 +35,8 @@ public class EmissionManager {
 		if(!(pos2==-1)){
 		return emissionProbabilities[pos1][pos2];
 		//for unseen tokens, all tags emitt with equal prob
-		}else{return 0.00000000001;}
+		}else{return 0;
+		}
 		
 		}
 	

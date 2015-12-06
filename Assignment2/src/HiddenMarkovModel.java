@@ -10,7 +10,6 @@ public class HiddenMarkovModel {
 	public EmissionManager emissionManager;
 	private String[] assignedTags;
 	private double[][] probabilityTabular;
-	private double normalizationParameter;
 	public double kValerrorRate;
 	
 	public HiddenMarkovModel(){
@@ -80,9 +79,7 @@ public class HiddenMarkovModel {
 		for (int a=0; a<data.length;a++){	
 		String s= prepareInput(data[a]);
 		String[] tokens = convertTextToArray(s);
-		double length=tokens.length;
-		
-		normalizationParameter = (1/(length/2));
+	
 		
 		//System.out.println("Norm.Parameter " + normalizationParameter);
 		
@@ -155,12 +152,14 @@ public class HiddenMarkovModel {
 					}
 				}
 				//emission - p das gegebenes Wort ist getagt mit jedem Tag
+				double totalProbability=0;
+				double a = emissionManager.getEmissionProbability(tag, token);
+				if(!(a==0)){
 				
-				double a = Math.log(emissionManager.getEmissionProbability(tag, token));
-				
-				
-				double totalProbability = (maxPathProbability+ a);
-			
+				 totalProbability = maxPathProbability + Math.log(a);
+				}else{
+					totalProbability=maxPathProbability;
+				}
 				
 				
 				//System.out.println(totalProbability);
