@@ -186,6 +186,12 @@ public class SpamClassifier {
          return fileNames;
  }
  
+	 
+	 private void clasify(Instances emails, Classifier model) throws Exception{
+		
+		 }
+		 
+	 
  
   public static void main(String[] args) throws Exception {
  
@@ -232,9 +238,15 @@ public class SpamClassifier {
        System.out.println("Attributes "+dataFiltered.numAttributes()); 
    	     
    	      
-       //System.out.println(" Filtered data: " + dataFiltered); 
+       //System.out.println(" Filtered data: " + dataFiltered);
        
-       Crossvalidator.validate(10, dataFiltered);
+       //currenly not the best
+       Classifier BestModel = Crossvalidator.validate(10, dataFiltered);
+       //write model to file
+       BufferedWriter writer = new BufferedWriter(new FileWriter("model"));
+	    writer.write(BestModel.toString());
+	    writer.flush();
+	    writer.close();
       
 	    
 	   
