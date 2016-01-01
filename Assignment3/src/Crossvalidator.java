@@ -3,6 +3,7 @@ import java.util.Random;
 import weka.classifiers.Classifier;
 import weka.classifiers.Evaluation;
 import weka.classifiers.bayes.NaiveBayes;
+import weka.classifiers.trees.RandomForest;
 import weka.core.Instance;
 import weka.core.Instances;
 
@@ -10,7 +11,7 @@ public class Crossvalidator {
 
 	
 	
-	public static void validate(int folds, Instances dataFiltered) throws Exception{
+	public static Classifier validate(int folds, Instances dataFiltered) throws Exception{
 	  
     /*
       
@@ -70,8 +71,9 @@ public class Crossvalidator {
 
 	  */
 	  
-	  
+		 Classifier cModel = null;
 	    int seed  = 10;
+	    double previousfalsPos=0;
 	    
 	    // randomize data
 	    Random rand = new Random(seed);
@@ -94,15 +96,18 @@ public class Crossvalidator {
 	      //check stratification
 	      int numspam=0;
 	      int numham=0;
+	     
+	      
 	      for (int a=0; a<test.numInstances(); a++){
 	    	  
-	      System.out.println(test.instance(a));
+	      //System.out.println(test.instance(a).stringValue(0));
 	      if (test.instance(a).stringValue(0)=="spam"){
 	    	  numspam++;
 	      }else numham++;
 	      
 	      }
-	      System.out.println("Spam / Ham = "+numspam/numham);
+	      double relation= numspam/numham;
+	      System.out.println("Spam / Ham = "+ relation);
 	      
 	      
 	      
@@ -111,11 +116,11 @@ public class Crossvalidator {
 	      // Instances train = randData.trainCV(folds, n, rand);
 
 	      // build and evaluate classifier
-	      Classifier cModel = (Classifier)new NaiveBayes();
+	      cModel = (Classifier)new RandomForest();
 	      cModel.buildClassifier(train);
 	      eval.evaluateModel(cModel, test);
 	      
-	      System.out.println("Fold Number"+n);
+	      System.out.println("Fold Number "+n);
 	      System.out.println("P Fold:"+eval.precision(0));
 	      System.out.println("E Fod:"+eval.errorRate());
 	      System.out.println("R Fod:"+eval.recall(0));
@@ -123,7 +128,14 @@ public class Crossvalidator {
 	      
 	      System.out.println("TRUE POSITIVES "+eval.numTruePositives(0));
 	      System.out.println("TRUE Negatives "+eval.numTrueNegatives(0));
-	      System.out.println("Correct Total"+eval.correct());
+	      System.out.println("Correct Total "+eval.correct());
+	      
+	      double falsePos= eval.numFalsePositives(0)-previousfalsPos;
+	      previousfalsPos+=falsePos;
+	      
+	      System.out.println("Num False POSITIVES "+falsePos);
+	      //System.out.println("Num False POSITIVES "+eval.numFalsePositives(0));
+	      
 	      
 	      System.out.println("Train length "+train.numInstances());
 	      System.out.println("Test length "+test.numInstances());
@@ -141,6 +153,8 @@ public class Crossvalidator {
 	    System.out.println();
 	    System.out.println(eval.toSummaryString("=== " + folds + "-fold Cross-validation ===", false));
 
+	    return cModel;
+	    
 }
 	
 	
