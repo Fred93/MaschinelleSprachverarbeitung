@@ -19,10 +19,15 @@ import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.sun.org.apache.xerces.internal.jaxp.datatype.DatatypeFactoryImpl;
+
 public class SpamClassifier {
 	static FastVector records;
 	static Instances trainingSet;
 	static Attribute emailMessage;
+	public static final int LEARNING = 1;
+	public static final int CLASSIFICATION = 2;
+	public int mode = SpamClassifier.LEARNING;
 	
 	//create Arff file from path
 	public Instances loadTextstoArff(String path) throws IOException{
@@ -61,6 +66,28 @@ public class SpamClassifier {
                  } else  if (dataFiles.get(looper).contains("spam")){
                          rec.setValue((Attribute) records.elementAt(0), "spam");
                  }
+                 rec.setValue((Attribute) records.elementAt(1), emailSubject+content);
+               
+                //rec.setValue((Attribute) records.elementAt(2), content);
+                 trainingSet.add(rec);
+         }
+ }
+	 private void readUnlabeledTrainingDataset(String dataset) throws IOException {
+
+         ArrayList<String> fileNames = new ArrayList<String>();
+         ArrayList<String> dataFiles = this.listFiles(dataset, fileNames);
+         String data = "";
+         String emailSubject="";
+         String content ="";
+         for (int looper = 0; looper < dataFiles.size(); looper++) {
+                 data = this.readFileAsString(dataFiles.get(looper));
+        	     //System.out.println(data);
+                 emailSubject=extractEmailSubject(data);
+                 content=extractEmailContent(data);
+                 
+                 Instance rec = new Instance(2);
+            
+                 
                  rec.setValue((Attribute) records.elementAt(1), emailSubject+content);
                
                 //rec.setValue((Attribute) records.elementAt(2), content);
@@ -190,6 +217,32 @@ public class SpamClassifier {
 	 private void clasify(Instances emails, Classifier model) throws Exception{
 		
 		 }
+	 
+	 public Classifier loadClassifier(String rPath){
+		Classifier cl = null;
+		try {
+			String dir = System.getProperty("user.dir");
+			cl = (Classifier) weka.core.SerializationHelper.read(dir+rPath);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return cl;
+	 }
+	 
+	 public void saveClassifier(Classifier model, String rPath){
+		 String path = System.getProperty("user.dir");
+		try {
+			ObjectOutputStream oos = new ObjectOutputStream(
+					  new FileOutputStream(path+rPath));
+
+		      oos.writeObject(model);
+		      oos.flush();
+		      oos.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	 }
 		 
 	 
  
@@ -216,6 +269,12 @@ public class SpamClassifier {
      trainingSet.setClass(eClass);
      classifier.readTrainingDataset("mails_test_subset");
      classifier.writeArf(trainingSet, "test.arff");
+     
+     //trainingSet = new Instances("SpamClsfyTraining", records, 80);
+     //System.out.println("TrainingSet length "+trainingSet.numInstances());
+     //trainingSet.setClass(eClass);
+     //classifier.readUnlabeledTrainingDataset("mails_test_subset");
+     //classifier.writeArf(trainingSet, "testUnlabeled.arff");
 	/*
 	BufferedReader breader = null;
 	breader = new BufferedReader(new FileReader("mails_naive.arff"));
@@ -237,16 +296,48 @@ public class SpamClassifier {
        classifier.writeArf(dataFiltered, "mails_filtered.arff");
        System.out.println("Attributes "+dataFiltered.numAttributes()); 
    	     
-   	      
+   	    
        //System.out.println(" Filtered data: " + dataFiltered);
-       
        //currenly not the best
-       Classifier BestModel = Crossvalidator.validate(10, dataFiltered);
-       //write model to file
-       BufferedWriter writer = new BufferedWriter(new FileWriter("model"));
-	    writer.write(BestModel.toString());
-	    writer.flush();
-	    writer.close();
+       classifier.mode = SpamClassifier.CLASSIFICATION;
+       if (classifier.mode == SpamClassifier.LEARNING){
+    	   Classifier bestModel = Crossvalidator.validate(10, dataFiltered);
+           //write model to file
+          classifier.saveClassifier(bestModel, "/models/J48.model");
+          System.out.println("MODEL SAVED");
+       }else{
+    	   Classifier model = classifier.loadClassifier("/models/J48.model");
+    	   
+    	   
+    	   Instances unlabeled = dataFiltered;
+    	   System.out.println(unlabeled);
+    	// set class attribute
+    	   unlabeled.setClassIndex(0);
+    	   
+    	   // create copy
+    	   Instances labeled = new Instances(unlabeled);
+    	   
+    	   // label instances
+    	   System.out.println(unlabeled.numInstances());
+    	   for (int i = 0; i < unlabeled.numInstances(); i++) {
+    		  System.out.println(unlabeled.instance(i));
+    	     double clsLabel = model.classifyInstance(unlabeled.instance(i));
+    	     
+    	     labeled.instance(i).setClassValue(clsLabel);
+    	     System.out.println(unlabeled.instance(i));
+    	   }
+    	   
+    	   // save labeled data
+    	   BufferedWriter writer = new BufferedWriter(
+    	                             new FileWriter("labeled.arff"));
+    	   writer.write(labeled.toString());
+    	   writer.newLine();
+    	   writer.flush();
+    	   writer.close();
+    	   System.out.println(unlabeled.classAttribute());
+
+       }
+       
       
 	    
 	   

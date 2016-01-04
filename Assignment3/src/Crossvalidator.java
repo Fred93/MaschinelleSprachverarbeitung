@@ -1,9 +1,14 @@
+import java.io.FileOutputStream;
+import java.io.ObjectOutputStream;
 import java.util.Random;
 
 import weka.classifiers.Classifier;
 import weka.classifiers.Evaluation;
 import weka.classifiers.bayes.NaiveBayes;
+import weka.classifiers.trees.J48;
 import weka.classifiers.trees.RandomForest;
+import weka.classifiers.functions.VotedPerceptron;
+import weka.classifiers.trees.RandomTree;
 import weka.core.Instance;
 import weka.core.Instances;
 
@@ -116,9 +121,11 @@ public class Crossvalidator {
 	      // Instances train = randData.trainCV(folds, n, rand);
 
 	      // build and evaluate classifier
-	      cModel = (Classifier)new RandomForest();
+	      cModel = (Classifier) new J48();
+	      //cModel = (Classifier) new RandomTree();
 	      cModel.buildClassifier(train);
 	      eval.evaluateModel(cModel, test);
+	      
 	      
 	      System.out.println("Fold Number "+n);
 	      System.out.println("P Fold:"+eval.precision(0));
