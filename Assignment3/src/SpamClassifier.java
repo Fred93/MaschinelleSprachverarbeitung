@@ -20,6 +20,8 @@ import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.jsoup.Jsoup;
+
 import com.sun.org.apache.xerces.internal.jaxp.datatype.DatatypeFactoryImpl;
 
 public class SpamClassifier {
@@ -58,12 +60,13 @@ public class SpamClassifier {
          String data = "";
          String emailSubject="";
          String content ="";
-         for (int looper = 0; looper < dataFiles.size(); looper++) {
+           for (int looper = 0; looper < dataFiles.size(); looper++) {
+        	 
                  data = this.readFileAsString(dataFiles.get(looper));
         	     //System.out.println(data);
                  emailSubject=extractEmailSubject(data);
-                 content=extractEmailContent(data);
-                 
+                 content=extractEmailFature(data);
+                 System.out.println(content);
                  Instance rec = new Instance(2);
             
                  if (dataFiles.get(looper).contains("ham")) {
@@ -76,29 +79,9 @@ public class SpamClassifier {
                 //rec.setValue((Attribute) records.elementAt(2), content);
                  trainingSet.add(rec);
          }
- }
-	 private void readUnlabeledTrainingDataset(String dataset) throws IOException {
+       }
+	 
 
-         ArrayList<String> fileNames = new ArrayList<String>();
-         ArrayList<String> dataFiles = this.listFiles(dataset, fileNames);
-         String data = "";
-         String emailSubject="";
-         String content ="";
-         for (int looper = 0; looper < dataFiles.size(); looper++) {
-                 data = this.readFileAsString(dataFiles.get(looper));
-        	     //System.out.println(data);
-                 emailSubject=extractEmailSubject(data);
-                 content=extractEmailContent(data);
-                 
-                 Instance rec = new Instance(2);
-            
-                 
-                 rec.setValue((Attribute) records.elementAt(1), emailSubject+content);
-               
-                //rec.setValue((Attribute) records.elementAt(2), content);
-                 trainingSet.add(rec);
-         }
- }
 	 
 	 private String extractEmailSubject(String file){
 		 String subject ="";
@@ -116,10 +99,11 @@ public class SpamClassifier {
 	 
 	 private String extractEmailFature(String filee){
 		 String content ="";
-		 String file = filee.toLowerCase();
-		 
-		 
-		 return content;
+		 //String file = filee.toLowerCase();
+		 content=Jsoup.parse(filee).text();
+		String content2=content.replaceAll("(Subject:|Received:|Return-Path:|Date:|MiME-Version:|X-Mailer:|X-Priority:|X-List-Unsubscribe:|Sender:|Sender:|MIME-Version:|To:|X-Originalarrivaltime:).*?(Subject:|X-Originalarrivaltime:|Received:|Return-Path:|Date:|MiME-Version:|X-Mailer:|X-Priority:|X-List-Unsubscribe:|Sender:|Sender:|MIME-Version:|To:)", "");
+		
+		 return content2;
 	 }
 	 
 	 
@@ -232,9 +216,7 @@ public class SpamClassifier {
  }
  
 	 
-	 private void clasify(Instances emails, Classifier model) throws Exception{
-		
-		 }
+
 	 
 	 public Classifier loadClassifier(String rPath){
 		Classifier cl = null;
@@ -348,7 +330,9 @@ public class SpamClassifier {
 	//Instances arff = classifier.loadTextstoArff("mails_train");
 	//classifier.writeArf(arff, "mails_raw.arff");
 	
- 
+	
+	
+	
 	 //emailMessage = new Attribute("emailMessage", (FastVector) null);
 	 Attribute emailSubject = new Attribute("emailSubject", (FastVector) null);
      FastVector emailClass = new FastVector(2);
@@ -363,7 +347,7 @@ public class SpamClassifier {
      trainingSet = new Instances("SpamClsfyTraining", records, 80);
      System.out.println("TrainingSet length "+trainingSet.numInstances());
      trainingSet.setClass(eClass);
-     classifier.readTrainingDataset("mails_test_subset");
+     classifier.readTrainingDataset("mails_train_original");
      classifier.writeArf(trainingSet, "test.arff");
      
      //trainingSet = new Instances("SpamClsfyTraining", records, 80);
@@ -377,14 +361,16 @@ public class SpamClassifier {
 	trainingSet=new Instances (breader);
 	*/
      
-     //filter must be global
-       filter = new StringToWordVector();
-       filter.setLowerCaseTokens(true);
-       filter.setTFTransform(true);
-       filter.setIDFTransform(true);
-       filter.setOutputWordCounts(true);
+   //filter must be global
+     filter = new StringToWordVector();
+     filter.setLowerCaseTokens(true);
+     filter.setTFTransform(true);
+     filter.setIDFTransform(true);
+     filter.setOutputWordCounts(true);
+     filter.setInputFormat(trainingSet);
+ 
+     
        trainingSet.setClass(eClass);
-       filter.setInputFormat(trainingSet);
        Instances dataFiltered = Filter.useFilter(trainingSet, filter);
        //write to file
        dataFiltered.setClass(eClass);
