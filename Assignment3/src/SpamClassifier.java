@@ -15,6 +15,7 @@ import weka.classifiers.bayes.NaiveBayes;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -23,7 +24,11 @@ import com.sun.org.apache.xerces.internal.jaxp.datatype.DatatypeFactoryImpl;
 
 public class SpamClassifier {
 	static FastVector records;
+	static FastVector unlabeledRecords;
 	static Instances trainingSet;
+	//static Instances ESet;
+	static ArrayList<String> fileNamesEmailSet;
+	static StringToWordVector filter;
 	static Attribute emailMessage;
 	public static final int LEARNING = 1;
 	public static final int CLASSIFICATION = 2;
@@ -108,6 +113,15 @@ public class SpamClassifier {
 		 }
 		 return subject;
 	 }
+	 
+	 private String extractEmailFature(String filee){
+		 String content ="";
+		 String file = filee.toLowerCase();
+		 
+		 
+		 return content;
+	 }
+	 
 	 
 	 private String extractEmailContent(String filee){
 		 String content ="";
@@ -202,7 +216,11 @@ public class SpamClassifier {
 	 private ArrayList<String> listFiles(String path, ArrayList<String> fileNames) {
          File dir = new File(path);
          File[] files = dir.listFiles();
-
+         if(files.length>0) {
+        	 System.out.println("yes");
+         }
+         
+         
          for (int loop = 0; loop < files.length; loop++) {
                  if (files[loop].isDirectory()) {
                          listFiles(files[loop].getAbsolutePath(), fileNames);
@@ -243,8 +261,86 @@ public class SpamClassifier {
 			e.printStackTrace();
 		}
 	 }
-		 
+		 public void filterEmails(Classifier model, String pfadzuEmails) throws Exception{
+			 
+			 
+			 Instances unlabaled_unfiltered = readUnlabeled(pfadzuEmails);
+			// set class attribute
+			 
+			 //System.out.println("Class "+unlabaled_unfiltered.getClass().getName());
+			 
+			 Instances unlabeled = Filter.useFilter(unlabaled_unfiltered, filter);
+			 // create copy
+			 unlabeled.setClassIndex(0);
+			 
+			 Instances labeled = new Instances(unlabeled); 
+			 writeArf(unlabeled, "unlabaled_mails_filtered.arff");
+			 File file = new File("result");
+			 FileWriter f = new FileWriter(file);
+			 BufferedWriter s = new BufferedWriter(f);
+			 
+			 for (int i = 0; i < unlabeled.numInstances(); i++) {
+	    		 System.out.println(unlabeled.instance(i));
+	    		 String fileName= fileNamesEmailSet.get(i);
+	    		 //System.out.println(fileName);
+	    	     double clsLabel = model.classifyInstance(unlabeled.instance(i));
+	    	     System.out.println(clsLabel);
+	    	     labeled.instance(i).setClassValue(clsLabel);
+	    	     s.write(fileName+ ": "+ clsLabel + "\n");
+	    	     
+	    	     //labeled.instance(i).setClassValue(clsLabel);
+	    	     //System.out.println("Labeled  "+labeled.instance(i));
+	    	   }
+			 writeArf(unlabeled, "classified_mails.arff");
+			 s.close();
+		 }
+		 public Instances readUnlabeled(String pfad) throws Exception{
+			 
+			 Attribute emailContent = new Attribute("emailContent", (FastVector) null);
+			 //FastVector emailClass = new FastVector(2);
+			 //emailClass.addElement("spam");
+		     //emailClass.addElement("ham");
+		     Attribute eClass= new Attribute("emailClass", (FastVector) null);
+			 unlabeledRecords = new FastVector(2);
+			 unlabeledRecords.addElement(eClass);
+			 unlabeledRecords.addElement(emailContent);
+
+		     //records.addElement(emailMessage);
+			Instances ESet = new Instances("SpamClsfy", unlabeledRecords, 80);
+			ESet.setClass(eClass);
+			 fileNamesEmailSet = new ArrayList<String>();
+	         ArrayList<String> dataFiles = this.listFiles(pfad, fileNamesEmailSet);
+	         String data = "";
+	         String emailSubject="";
+	         String content ="";
+	         for (int looper = 0; looper < dataFiles.size(); looper++) {
+	                 data = this.readFileAsString(dataFiles.get(looper));
+	        	     //System.out.println(data);
+	                 emailSubject=extractEmailSubject(data);
+	                 content=extractEmailContent(data);
+	                 Instance rec = new Instance(2);
+	                 rec.setValue(emailContent, emailSubject+content);
+	                 //rec.setValue(eClass, "ham");
+	                 
+	                 
+	                //rec.setValue((Attribute) records.elementAt(2), content);
+	                 ESet.add(rec);
+	         }
+	         writeArf(ESet, "unlabaled_mails.arff");
+			//Instances filteredStringtoWord = filterStringToWordVector(ESet);
+	         
+	         
+	         
+	         return ESet;
+			 
+		 }
 	 
+		 public Instances filterStringToWordVector(Instances arff) throws Exception{
+			 
+		       Instances dataFiltered = Filter.useFilter(arff, filter);
+		     return dataFiltered;
+		 }
+		 
  
   public static void main(String[] args) throws Exception {
  
@@ -280,7 +376,9 @@ public class SpamClassifier {
 	breader = new BufferedReader(new FileReader("mails_naive.arff"));
 	trainingSet=new Instances (breader);
 	*/
-       StringToWordVector filter = new StringToWordVector();
+     
+     //filter must be global
+       filter = new StringToWordVector();
        filter.setLowerCaseTokens(true);
        filter.setTFTransform(true);
        filter.setIDFTransform(true);
@@ -307,39 +405,9 @@ public class SpamClassifier {
           System.out.println("MODEL SAVED");
        }else{
     	   Classifier model = classifier.loadClassifier("/models/J48.model");
-    	   
-    	   
-    	   Instances unlabeled = dataFiltered;
-    	   System.out.println(unlabeled);
-    	// set class attribute
-    	   unlabeled.setClassIndex(0);
-    	   
-    	   // create copy
-    	   Instances labeled = new Instances(unlabeled);
-    	   
-    	   // label instances
-    	   System.out.println(unlabeled.numInstances());
-    	   for (int i = 0; i < unlabeled.numInstances(); i++) {
-    		  System.out.println(unlabeled.instance(i));
-    	     double clsLabel = model.classifyInstance(unlabeled.instance(i));
-    	     
-    	     labeled.instance(i).setClassValue(clsLabel);
-    	     System.out.println(unlabeled.instance(i));
-    	   }
-    	   
-    	   // save labeled data
-    	   BufferedWriter writer = new BufferedWriter(
-    	                             new FileWriter("labeled.arff"));
-    	   writer.write(labeled.toString());
-    	   writer.newLine();
-    	   writer.flush();
-    	   writer.close();
-    	   System.out.println(unlabeled.classAttribute());
+    	   classifier.filterEmails(model, "mails_unlabaled_test");
 
        }
-       
-      
-	    
-	   
+
   }
 }
