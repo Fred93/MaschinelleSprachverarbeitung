@@ -8,16 +8,27 @@ import weka.classifiers.bayes.NaiveBayes;
 import weka.classifiers.trees.J48;
 import weka.classifiers.trees.RandomForest;
 import weka.classifiers.functions.VotedPerceptron;
+import weka.classifiers.meta.FilteredClassifier;
 import weka.classifiers.trees.RandomTree;
 import weka.core.Instance;
 import weka.core.Instances;
+import weka.filters.unsupervised.attribute.StringToWordVector;
 
 public class Crossvalidator {
 
 	
 	
 	public static Classifier validate(int folds, Instances dataFiltered) throws Exception{
-	  
+		StringToWordVector  filter = new StringToWordVector();
+		     filter.setLowerCaseTokens(true);
+		     filter.setTFTransform(true);
+		     filter.setIDFTransform(true);
+		     filter.setOutputWordCounts(true);
+		     filter.setInputFormat(dataFiltered);
+		     
+		     FilteredClassifier filtClassifier=new FilteredClassifier();
+		     filtClassifier.setFilter(filter);
+		     filtClassifier.setClassifier((Classifier) new J48());
     /*
       
      // Another Cross validation
@@ -76,7 +87,7 @@ public class Crossvalidator {
 
 	  */
 	  
-		 Classifier cModel = null;
+		
 	    int seed  = 10;
 	    double previousfalsPos=0;
 	    
@@ -121,10 +132,11 @@ public class Crossvalidator {
 	      // Instances train = randData.trainCV(folds, n, rand);
 
 	      // build and evaluate classifier
-	      cModel = (Classifier) new J48();
+	      filtClassifier.buildClassifier(train);
+	      
 	      //cModel = (Classifier) new RandomTree();
-	      cModel.buildClassifier(train);
-	      eval.evaluateModel(cModel, test);
+	      
+	      eval.evaluateModel(filtClassifier, test);
 	      
 	      
 	      System.out.println("Fold Number "+n);
@@ -160,7 +172,7 @@ public class Crossvalidator {
 	    System.out.println();
 	    System.out.println(eval.toSummaryString("=== " + folds + "-fold Cross-validation ===", false));
 
-	    return cModel;
+	    return filtClassifier;
 	    
 }
 	
