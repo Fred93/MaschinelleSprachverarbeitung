@@ -51,18 +51,22 @@ public class SpamClassifier {
 		writer.close();
 	}
 
-	private Instances readTrainingDataset(String dataset) throws IOException {
+	private Instances readTrainingDataset() throws IOException {
 		Instances trainingSet = new Instances("SpamClsfyTraining", records, 80);
-		System.out.println("TrainingSet length " + trainingSet.numInstances());
 		trainingSet.setClass(eClass);
-		ArrayList<String> fileNames = new ArrayList<String>();
-		ArrayList<String> dataFiles = this.listFiles(dataset, fileNames);
+		
+		ArrayList<String> dataFilesSpam = this.listFiles(spamDir);
+		ArrayList<String> dataFilesHam = this.listFiles(hamDir);
+		int size = dataFilesSpam.size()+dataFilesHam.size();
+		System.out.println("TrainingSet length " + size);
+		//System.out.println("TrainingSet length spam" + trainingSet.numInstances());
+		//System.out.println("TrainingSet length Ham" + trainingSet.numInstances());
 		String data = "";
 		String emailSubject = "";
 		String content = "";
-		for (int looper = 0; looper < dataFiles.size(); looper++) {
-
-			data = this.readFileAsString(dataFiles.get(looper));
+		
+		for (int looper = 0; looper < dataFilesSpam.size(); looper++) {
+			data = this.readFileAsString(dataFilesSpam.get(looper));
 			// System.out.println(data);
 			emailSubject = extractEmailSubject(data);
 			content = extractEmailFature(data);
@@ -71,20 +75,29 @@ public class SpamClassifier {
 			content = cleanString(content);
 			rec.setValue((Attribute) records.elementAt(1), emailSubject);
 			rec.setValue((Attribute) records.elementAt(2), content);
-			if (dataFiles.get(looper).contains("ham")) {
-				rec.setValue((Attribute) records.elementAt(0), "ham");
-				
-				//Oversampling Hams
-				for (int i = 0; i < 5; i++) {
-					trainingSet.add(rec);
-				}
-				
-			} else if (dataFiles.get(looper).contains("spam")) {
-				rec.setValue((Attribute) records.elementAt(0), "spam");
-			}
+            rec.setValue((Attribute) records.elementAt(0), "spam");
 			
 			trainingSet.add(rec);
 		}
+		for (int looper = 0; looper < dataFilesHam.size(); looper++) {
+		data = this.readFileAsString(dataFilesHam.get(looper));
+		// System.out.println(data);
+		emailSubject = extractEmailSubject(data);
+		content = extractEmailFature(data);
+		Instance rec = new Instance(3);
+		emailSubject = cleanString(emailSubject);
+		content = cleanString(content);
+		rec.setValue((Attribute) records.elementAt(1), emailSubject);
+		rec.setValue((Attribute) records.elementAt(2), content);
+		rec.setValue((Attribute) records.elementAt(0), "ham");
+		//Oversampling Hams
+			for (int i = 0; i < 5; i++) {
+				trainingSet.add(rec);
+			}
+		trainingSet.add(rec);
+		
+	}
+		System.out.println("FINISHED READING DATA");
 		return trainingSet;
 	}
 
@@ -128,14 +141,16 @@ public class SpamClassifier {
 		return new String(buffer);
 	}
 
-	private ArrayList<String> listFiles(String path, ArrayList<String> fileNames) {
+	private ArrayList<String> listFiles(String path) {
+		ArrayList<String> fileNames = new ArrayList<String>();
 		File dir = new File(path);
 		File[] files = dir.listFiles();
+		System.out.println(files.length);
 
 		for (int loop = 0; loop < files.length; loop++) {
-			if (files[loop].isDirectory()) {
+			/*if (files[loop].isDirectory()) {
 				listFiles(files[loop].getAbsolutePath(), fileNames);
-			} else
+			} else*/
 				fileNames.add(files[loop].getAbsolutePath());
 		}
 		// Collections.shuffle(fileNames);
@@ -217,12 +232,12 @@ public class SpamClassifier {
 		Instances ESet = new Instances("SpamClsfy", unlabeledRecords, 80);
 		ESet.setClass(eClass);
 		fileNamesEmailSet = new ArrayList<String>();
-		ArrayList<String> dataFiles = this.listFiles(pfad, fileNamesEmailSet);
+		fileNamesEmailSet = this.listFiles(pfad);
 		String data = "";
 		String emailSubject = "";
 		String content = "";
-		for (int looper = 0; looper < dataFiles.size(); looper++) {
-			data = this.readFileAsString(dataFiles.get(looper));
+		for (int looper = 0; looper < fileNamesEmailSet.size(); looper++) {
+			data = this.readFileAsString(fileNamesEmailSet.get(looper));
 			// System.out.println(data);
 			emailSubject = extractEmailSubject(data);
 			content = extractEmailFature(data);
@@ -246,16 +261,15 @@ public class SpamClassifier {
 	public static void main(String[] args) throws Exception {
 		SpamClassifier classifier = new SpamClassifier();
 		
-		if (args.length==4){
-			System.out.println("Please spacify all parameters");
-			return;
-		} else{
+		
 			String m = 	args[0];
 			if (m.equals("learn")){
 				classifier.mode = SpamClassifier.LEARNING;
 				classifier.spamDir = args[1];
 				classifier.hamDir = args[2];
 				classifier.modelName = args[3];
+				//System.out.println(classifier.spamDir);
+				
 				
 			}else if (m.equals("classify")){
 				classifier.mode = SpamClassifier.CLASSIFICATION;
@@ -265,11 +279,11 @@ public class SpamClassifier {
 			}else{
 				System.out.println("Mode not supported");
 				return;
-			}
+			
 		}
 
 		
-		classifier.mode = SpamClassifier.CLASSIFICATION;
+		//classifier.mode = SpamClassifier.CLASSIFICATION;
 		if (classifier.mode == SpamClassifier.LEARNING) {
 
 			Attribute emailSubject = new Attribute("emailSubject", (FastVector) null);
@@ -283,8 +297,8 @@ public class SpamClassifier {
 			records.addElement(emailSubject);
 			records.addElement(emailContent);
 
-			Instances trainingset = classifier.readTrainingDataset("mails_test_subset");
-			classifier.writeArf(trainingset, "test.arff");
+			Instances trainingset = classifier.readTrainingDataset();
+			//classifier.writeArf(trainingset, "test.arff");
 
 			Classifier bestModel = Crossvalidator.validate(10, trainingset);
 			// write model to file
