@@ -2,8 +2,8 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="/Applications/weka-3-6-13/weka.jar"/>
-	<classpathentry kind="lib" path="/Applications/weka-3-6-13/weka-src.jar"/>
-	<classpathentry kind="lib" path="/Users/Alexey/Downloads/jsoup-1.8.3.jar"/>
+	<classpathentry kind="lib" path="C:/Program Files/Weka-3-6/weka.jar"/>
+	<classpathentry kind="lib" path="C:/Program Files/Weka-3-6/weka-src.jar"/>
+	<classpathentry kind="lib" path="C:/Users/D059348/dev/utils/jsoup-1.8.3.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
