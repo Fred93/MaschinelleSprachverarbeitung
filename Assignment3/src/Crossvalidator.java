@@ -64,7 +64,8 @@ public class Crossvalidator {
 
 			eval.evaluateModel(filtClassifier, test);
 
-			System.out.println("Fold Number " + n);
+			System.out.println("Fold Number " + n+1);
+			/*
 			System.out.println("P Fold:" + eval.precision(0));
 			System.out.println("E Fod:" + eval.errorRate());
 			System.out.println("R Fod:" + eval.recall(0));
@@ -73,6 +74,7 @@ public class Crossvalidator {
 			System.out.println("TRUE POSITIVES " + eval.numTruePositives(0));
 			System.out.println("TRUE Negatives " + eval.numTrueNegatives(0));
 			System.out.println("Correct Total " + eval.correct());
+			*/
 
 			double falsePos = eval.numFalsePositives(0) - previousfalsPos;
 			previousfalsPos += falsePos;
@@ -89,9 +91,7 @@ public class Crossvalidator {
 
 		// output evaluation
 		System.out.println();
-		System.out.println("=== Setup ===");
-		// System.out.println("Classifier: " + Utils.toCommandLine(cls));
-		System.out.println("Dataset: " + dataFiltered.relationName());
+		System.out.println("=== Result ===");
 		System.out.println("Folds: " + folds);
 		System.out.println("Seed: " + seed);
 		System.out.println();

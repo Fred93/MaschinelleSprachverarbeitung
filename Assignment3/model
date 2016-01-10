@@ -1,9 +1,0 @@
-J48 pruned tree
-------------------
-
-url <= 0: spam (107.0)
-url > 0: ham (55.0/1.0)
-
-Number of Leaves  : 	2
-
-Size of the tree : 	3

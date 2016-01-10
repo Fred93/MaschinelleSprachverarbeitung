@@ -58,7 +58,7 @@ public class SpamClassifier {
 		ArrayList<String> dataFilesSpam = this.listFiles(spamDir);
 		ArrayList<String> dataFilesHam = this.listFiles(hamDir);
 		int size = dataFilesSpam.size()+dataFilesHam.size();
-		System.out.println("TrainingSet length " + size);
+		//System.out.println("TrainingSet length " + size);
 		//System.out.println("TrainingSet length spam" + trainingSet.numInstances());
 		//System.out.println("TrainingSet length Ham" + trainingSet.numInstances());
 		String data = "";
@@ -145,7 +145,7 @@ public class SpamClassifier {
 		ArrayList<String> fileNames = new ArrayList<String>();
 		File dir = new File(path);
 		File[] files = dir.listFiles();
-		System.out.println(files.length);
+		//System.out.println(files.length);
 
 		for (int loop = 0; loop < files.length; loop++) {
 			/*if (files[loop].isDirectory()) {
@@ -260,7 +260,6 @@ public class SpamClassifier {
 
 	public static void main(String[] args) throws Exception {
 		SpamClassifier classifier = new SpamClassifier();
-		
 		
 			String m = 	args[0];
 			if (m.equals("learn")){
