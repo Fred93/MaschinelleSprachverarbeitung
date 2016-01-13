@@ -53,12 +53,30 @@ public class geneMatcher {
 	    }
 		
 	}
+
+	private CharLmHmmChunker trainHMM(CharLmHmmChunker chunkerEstimator, String dir) throws FileNotFoundException {
+		
+	    Scanner scan = new Scanner(new File(dir));
+	    
+	    while(scan.hasNextLine()){
+	        String line = scan.nextLine();
+	        chunkerEstimator.trainDictionary(line, "B-protein");
+	    }
+	         
+		
+		
+		
+		return chunkerEstimator;
+	}
+	
+	
+	
 	// java TrainGeneTag <trainingInputFile> <modelOutputFile>
     @SuppressWarnings("deprecation")
 	public static void main(String[] args) throws IOException {
 		geneMatcher matcher = new geneMatcher();
 	
-	/*	
+		/*
 		File corpusFile=new File("Ressources/training_annotated.iob");
 		File modelFile = new File("Ressources/model");
 		
@@ -68,6 +86,7 @@ public class geneMatcher {
 		    HmmCharLmEstimator hmmEstimator
 		      = new HmmCharLmEstimator(MAX_N_GRAM,NUM_CHARS,LM_INTERPOLATION);
 		    CharLmHmmChunker chunkerEstimator = new CharLmHmmChunker(factory,hmmEstimator);
+		    CharLmHmmChunker chunkerEstimator2=matcher.trainHMM(chunkerEstimator,"Ressources/dyctionary_genenames.txt");
 		    
 		    System.out.println("Setting up Data Parser");
 		    @SuppressWarnings("deprecation")
@@ -81,10 +100,10 @@ public class geneMatcher {
 		    
 		    System.out.println("Compiling and Writing Model to File=" + modelFile);
 	        AbstractExternalizable.compileTo(chunkerEstimator,modelFile);
-			*/ 
+			*/
 		    
 		    
-		   
+		
 		 TrieDictionary<String> dictionary=matcher.readDictionary("Ressources/dyctionary_genenames.txt");
 		
 		 ExactDictionaryChunker dictionaryChunkerTT
@@ -102,6 +121,8 @@ public class geneMatcher {
 		matcher.chunk(dictionaryChunkerTT,text);
 		
 	}
+
+
 	
 
 }
