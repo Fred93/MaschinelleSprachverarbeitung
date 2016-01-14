@@ -54,8 +54,8 @@ public class geneMatcher {
 		
 	}
 
-	private CharLmHmmChunker trainHMM(CharLmHmmChunker chunkerEstimator, String dir) throws FileNotFoundException {
-		
+	private CharLmHmmChunker trainHMM(TokenizerFactory factory,HmmCharLmEstimator hmmEstimator, String dir) throws FileNotFoundException {
+		CharLmHmmChunker chunkerEstimator = new CharLmHmmChunker(factory,hmmEstimator);
 	    Scanner scan = new Scanner(new File(dir));
 	    
 	    while(scan.hasNextLine()){
@@ -71,12 +71,12 @@ public class geneMatcher {
 	
 	
 	
-	// java TrainGeneTag <trainingInputFile> <modelOutputFile>
+	 // java TrainGeneTag <trainingInputFile> <modelOutputFile>
     @SuppressWarnings("deprecation")
 	public static void main(String[] args) throws IOException {
 		geneMatcher matcher = new geneMatcher();
 	
-		/*
+		
 		File corpusFile=new File("Ressources/training_annotated.iob");
 		File modelFile = new File("Ressources/model");
 		
@@ -85,24 +85,23 @@ public class geneMatcher {
 		      = IndoEuropeanTokenizerFactory.INSTANCE;
 		    HmmCharLmEstimator hmmEstimator
 		      = new HmmCharLmEstimator(MAX_N_GRAM,NUM_CHARS,LM_INTERPOLATION);
-		    CharLmHmmChunker chunkerEstimator = new CharLmHmmChunker(factory,hmmEstimator);
-		    CharLmHmmChunker chunkerEstimator2=matcher.trainHMM(chunkerEstimator,"Ressources/dyctionary_genenames.txt");
+		    //CharLmHmmChunker chunkerEstimator = new CharLmHmmChunker(factory,hmmEstimator);
+		    CharLmHmmChunker chunkerEstimator=matcher.trainHMM(factory,hmmEstimator,"Ressources/dyctionary_genenames.txt");
+		    //chunkerEstimator.handle(arg0);
 		    
 		    System.out.println("Setting up Data Parser");
 		    @SuppressWarnings("deprecation")
-		    GeneTagParser parser 
-	            = new GeneTagParser();  // PLEASE IGNORE DEPRECATION WARNING
-		    
-			parser.setHandler(handler);
-		    
+		    GeneTagParser parser = new GeneTagParser();  // PLEASE IGNORE DEPRECATION WARNING
+		    parser.setHandler(chunkerEstimator);
 		    System.out.println("Training with Data from File=" + corpusFile);
 		    parser.parse(corpusFile);
 		    
+		    
 		    System.out.println("Compiling and Writing Model to File=" + modelFile);
 	        AbstractExternalizable.compileTo(chunkerEstimator,modelFile);
-			*/
+			
 		    
-		    
+		   /* 
 		
 		 TrieDictionary<String> dictionary=matcher.readDictionary("Ressources/dyctionary_genenames.txt");
 		
@@ -119,7 +118,7 @@ public class geneMatcher {
 	        = new ApproxDictionaryChunker(dictionary, IndoEuropeanTokenizerFactory.INSTANCE,
 	                                      editDistance,maxDistance);
 		matcher.chunk(dictionaryChunkerTT,text);
-		
+		*/
 	}
 
 
