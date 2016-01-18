@@ -55,7 +55,7 @@ public class Crossvalidator {
 
 			}
 			double relation = numspam / numham;
-			System.out.println("Spam / Ham = " + relation);
+			//System.out.println("Spam / Ham = " + relation);
 
 			// build and evaluate classifier
 			filtClassifier.buildClassifier(train);
@@ -64,7 +64,7 @@ public class Crossvalidator {
 
 			eval.evaluateModel(filtClassifier, test);
 
-			System.out.println("Fold Number " + n+1);
+			System.out.println("Fold Number " + (n+1));
 			/*
 			System.out.println("P Fold:" + eval.precision(0));
 			System.out.println("E Fod:" + eval.errorRate());
@@ -79,13 +79,13 @@ public class Crossvalidator {
 			double falsePos = eval.numFalsePositives(0) - previousfalsPos;
 			previousfalsPos += falsePos;
 
-			System.out.println("Num False POSITIVES " + falsePos);
+			//System.out.println("Num False POSITIVES " + falsePos);
 			// System.out.println("Num False POSITIVES
 			// "+eval.numFalsePositives(0));
 
-			System.out.println("Train length " + train.numInstances());
-			System.out.println("Test length " + test.numInstances());
-			System.out.println(" ");
+			//System.out.println("Train length " + train.numInstances());
+			//System.out.println("Test length " + test.numInstances());
+			//System.out.println(" ");
 
 		}
 
