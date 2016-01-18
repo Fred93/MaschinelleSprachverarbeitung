@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="Assignment1/java_reuters_parser/src"/>
+	<classpathentry kind="src" path="Assignment2/src"/>
+	<classpathentry kind="src" path="Assignment3/src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="output" path="Assignment3/bin"/>
+</classpath>
