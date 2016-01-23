@@ -39,11 +39,8 @@ public class GeneMatcher {
 	private boolean isTagged = true;
 	private ArrayList<String> stopwords;
 	private ArrayList<String> resultTagger;
-	private ArrayList<Boolean> resultTaggerB = new ArrayList<Boolean>();
-	private ArrayList<Boolean> res = new ArrayList<Boolean>();
-	public GeneMatcher() {
-		init();
-	}
+	private ArrayList<String> resultTaggerTag = new ArrayList<String>();
+	private ArrayList<String> res = new ArrayList<String>();
 
 	private void init() {
 		File corpusFile = new File("Ressources/training_annotated.iob");
@@ -52,7 +49,8 @@ public class GeneMatcher {
 		// Read Dictionary
 		dictionary = this.readDictionary("Ressources/dyctionary_genenames.txt");
 		stopwords = readStopwords("Ressources/stopwords");
-
+		
+		dictionary = removeStopwords(dictionary, stopwords);
 		// Read Input text
 
 		// Set TokenizerFactory
@@ -63,9 +61,13 @@ public class GeneMatcher {
 																														// case
 																														// sensitive
 		
+		Content content = readFile("Ressources/training_annotated.iob");
 		
-		chunkFile(dictionaryChunker, "Ressources/training_annotated.iob");
+		//content = removeStopwords(content, stopwords);
+		chunkContent(dictionaryChunker, content);
 		writeResult(resultTagger, "result.iob");
+		
+		evaluate(content);
 	}
 
 	public MapDictionary<String> readDictionary(String dic_path) {
@@ -99,14 +101,14 @@ public class GeneMatcher {
 	}
 	
 	//TODO Handle tags
-	private ArrayList<String> removeStopwords(ArrayList<String> txt, ArrayList<String> stopwords){
-		ArrayList<String> newTxt = new ArrayList<String>();
-		for(String line:txt){
-			if(!stopwords.contains(line)){
-				newTxt.add(line);
+	private MapDictionary<String> removeStopwords(MapDictionary<String> dictionary, ArrayList<String> stopwords){
+		MapDictionary<String> newList = new MapDictionary<String>();
+		for(DictionaryEntry<String> line:dictionary){
+			if(!containsIgnoreCase(stopwords, line.phrase())){
+				newList.addEntry(line);	
 			}
 		}
-		return newTxt;
+		return newList;
 	}
 
 	private void chunk(ExactDictionaryChunker chunker, String text) {
@@ -114,7 +116,7 @@ public class GeneMatcher {
 		CharSequence cs = chunking.charSequence();
 		if (chunking.chunkSet().size() == 0){
 			resultTagger.add(text + "\tO");
-			resultTaggerB.add(false);
+			resultTaggerTag.add("O");
 		}
 		for (Chunk chunk : chunking.chunkSet()) {
 			int start = chunk.start();
@@ -123,26 +125,54 @@ public class GeneMatcher {
 			double distance = chunk.score();
 			String match = chunk.type();
 			//System.out.printf("%15s  %15s   %8.1f\n", str, match, distance);
-			resultTagger.add(text + "\tB-Protein");
-			resultTaggerB.add(true);
+			resultTagger.add(text + "\tB-protein");
+			resultTaggerTag.add("B-protein");
 		}
-
 	}
 	
-	public void evaluate(){
+	public void evaluate(Content content){
+		res = content.getTags();
+		ArrayList<String> word = content.getWords();
 		System.out.println(res.size());
-		System.out.println(resultTaggerB.size());
-		int correctlyLabled = 0;
-		if (res.size() == resultTaggerB.size()){
+		System.out.println(resultTaggerTag.size());
+		int FP = 0;
+		int TP = 0;
+		int FN = 0;
+		int TN = 0;
+		if (res.size() == resultTaggerTag.size()){
 			for (int i = 0; i < res.size(); i++) {
-				if (res.get(i) == resultTaggerB.get(i)){
-					correctlyLabled++;
+				
+				//System.out.println(resultTaggerTag.get(i));
+				if (res.get(i).equals("O") && resultTaggerTag.get(i).equals("O"))TN++;
+				if (res.get(i).equals("O") && resultTaggerTag.get(i).equals("B-protein"))FP++;
+				if (res.get(i).equals("B-protein") && resultTaggerTag.get(i).equals("O")){
+					System.out.println(word.get(i));
+					FN++;
 				}
+				if (res.get(i).equals("B-protein") && resultTaggerTag.get(i).equals("B-protein"))TP++;
 			}
-			System.out.println("Accuracy: " + correctlyLabled*1.0/res.size());
+			double precision = TP*1.0/(TP+FP);
+			double recall = TP*1.0/(TP+FN);
+			double f = 2*recall*precision/(recall+precision);
+			System.out.println(TN);
+			System.out.println(TP);
+			System.out.println(FP);
+			System.out.println(FN);
+			System.out.println("Precision: " + precision);
+			System.out.println("Recal: " + recall);
+			System.out.println("F-Measure: " + f);
 		}else{
 			System.out.println("Wrong Size");
 		}
+	}
+	
+	public boolean containsIgnoreCase(ArrayList<String> arr, String s){
+		for (String el : arr) {
+			if (el.equalsIgnoreCase(s)){
+				return(true);
+			}
+		}
+		return(false);
 	}
 	
 	public void writeResult(ArrayList<String> res, String filename){
@@ -167,9 +197,51 @@ public class GeneMatcher {
 		}
 	}
 	
-	public void chunkFile(ExactDictionaryChunker chunker, String dir){
+	public Content readFile(String path){
+		ArrayList<String> words = new ArrayList<String>();
+		ArrayList<String> tags = new ArrayList<String>();
+		Scanner scan = null;
+		try {
+			scan = new Scanner(new File(path));
+			while (scan.hasNextLine()) {
+				String line = scan.nextLine();
+				if (isTagged){
+					//Ignore Empty Lines
+					if (!(line.equals("")||line.equals(" "))){
+						String[] s = line.split("\t");
+						
+						//is Tagged
+						if (s.length == 2){
+							words.add(s[0]);
+							tags.add(s[1]);
+						}
+					}
+				}
+			}
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}finally {
+			if (scan != null){
+				scan.close();
+			}
+		}
+		
+		return(new Content(words, tags));
+	}
+	
+	public void chunkContent(ExactDictionaryChunker chunker, Content content){
 		resultTagger = new ArrayList<String>();
-		res= new ArrayList<Boolean>();
+		res= new ArrayList<String>();
+		ArrayList<String> words = content.getWords();
+		for (String line : words) {
+			this.chunk(chunker, line);
+		}
+	}
+	
+	/*public void chunkFile(ExactDictionaryChunker chunker, String dir){
+		resultTagger = new ArrayList<String>();
+		res= new ArrayList<String>();
 		try {
 			Scanner scan = new Scanner(new File(dir));
 			while (scan.hasNextLine()) {
@@ -198,7 +270,7 @@ public class GeneMatcher {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	}
+	}*/
 
 	/*
 	private CharLmHmmChunker trainHMM(TokenizerFactory factory, HmmCharLmEstimator hmmEstimator, String dir)
@@ -219,6 +291,7 @@ public class GeneMatcher {
 	@SuppressWarnings("deprecation")
 	public static void main(String[] args) throws IOException {
 		GeneMatcher matcher = new GeneMatcher();
+		matcher.init();
 
 		// List<String> genes = new ArrayList<String>();
 
