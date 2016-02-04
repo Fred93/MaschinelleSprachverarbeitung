@@ -1,5 +1,4 @@
 ###MEDLINE:90092414
-
 Number	O
 of	O
 glucocorticoid	B-protein
@@ -128,9 +127,7 @@ of	O
 GR	B-protein
 level	O
 .	O
-
 ###MEDLINE:90194790
-
 [	O
 1	B-protein
 ,	I-protein

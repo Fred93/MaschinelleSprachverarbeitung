@@ -9,24 +9,37 @@ import java.util.List;
 import java.util.Scanner;
 
 import com.aliasi.tokenizer.LowerCaseTokenizerFactory;
+import com.aliasi.chunk.BioTagChunkCodec;
 import com.aliasi.chunk.CharLmHmmChunker;
 import com.aliasi.chunk.Chunk;
 import com.aliasi.chunk.Chunking;
+import com.aliasi.chunk.TagChunkCodec;
+import com.aliasi.corpus.Corpus;
+import com.aliasi.corpus.ObjectHandler;
 import com.aliasi.corpus.Parser;
 import com.aliasi.corpus.StringParser;
+import com.aliasi.crf.ChainCrfChunker;
+import com.aliasi.crf.ChainCrfFeatureExtractor;
 import com.aliasi.dict.ApproxDictionaryChunker;
 import com.aliasi.dict.DictionaryEntry;
 import com.aliasi.dict.ExactDictionaryChunker;
 import com.aliasi.dict.MapDictionary;
 import com.aliasi.dict.TrieDictionary;
 import com.aliasi.hmm.HmmCharLmEstimator;
+import com.aliasi.io.LogLevel;
+import com.aliasi.io.Reporter;
+import com.aliasi.io.Reporters;
 import com.aliasi.spell.FixedWeightEditDistance;
 import com.aliasi.spell.WeightedEditDistance;
+import com.aliasi.stats.AnnealingSchedule;
+import com.aliasi.stats.RegressionPrior;
+import com.aliasi.tag.Tagging;
 import com.aliasi.tokenizer.IndoEuropeanTokenizerFactory;
 import com.aliasi.tokenizer.LowerCaseTokenizerFactory;
 import com.aliasi.tokenizer.TokenizerFactory;
 import com.aliasi.util.AbstractExternalizable;
 //import com.aliasi.corpus.TagHandler;
+import com.aliasi.util.Arrays;
 
 public class GeneMatcher {
 	static final double CHUNK_SCORE = 1.0;
@@ -58,17 +71,40 @@ public class GeneMatcher {
 
 		// Init Chunker
 		dictionaryChunker = new ExactDictionaryChunker(dictionary, IndoEuropeanTokenizerFactory.INSTANCE, true, false); // not
-																														// case
-																														// sensitive
+		
+		// case
+		/*Corpus<ObjectHandler<Chunking>> corpus
+        = new GeneCorpus();																											// sensitive
+		
+		ChainCrfChunker crfChunker = ChainCrfChunker.estimate(corpus,
+                                   tagChunkCodec,
+                                   tokenizerFactory,
+                                   featureExtractor,
+                                   addIntercept,
+                                   minFeatureCount,
+                                   cacheFeatures,
+                                   prior,
+                                   priorBlockSize,
+                                   annealingSchedule,
+                                   minImprovement,
+                                   minEpochs,
+                                   maxEpochs,
+                                   reporter);
+		*/
 		
 		Content content = readFile("Ressources/training_annotated.iob");
 		
 		//content = removeStopwords(content, stopwords);
 		chunkContent(dictionaryChunker, content);
+		
+		
+		
 		writeResult(resultTagger, "result.iob");
 		
 		evaluate(content);
 	}
+	
+
 
 	public MapDictionary<String> readDictionary(String dic_path) {
 		MapDictionary<String> dictionary = new MapDictionary<String>();
@@ -290,8 +326,82 @@ public class GeneMatcher {
 	// java TrainGeneTag <trainingInputFile> <modelOutputFile>
 	@SuppressWarnings("deprecation")
 	public static void main(String[] args) throws IOException {
+		
+		File dataDir = new File("Ressources");
+        GeneCorpus corpus = new GeneCorpus(dataDir);
+        ObjectHandler<Chunking> printer
+            = new ObjectHandler<Chunking>() {
+                    public void handle(Chunking chunking) {
+                        System.out.println(chunking);
+                    }
+                };
+        System.out.println("\nTRAIN");
+        corpus.visitTrain(printer);
+        
+        System.out.println("\nTEST");
+        corpus.visitTest(printer);
+		
+        TokenizerFactory tokenizerFactory
+        = IndoEuropeanTokenizerFactory.INSTANCE;
+    boolean enforceConsistency = true;
+    TagChunkCodec tagChunkCodec
+        = new BioTagChunkCodec(tokenizerFactory,
+                               enforceConsistency);
+        
+    
+    int minFeatureCount = 1;
+
+    boolean cacheFeatures = true;
+
+    boolean addIntercept = true;
+
+    double priorVariance = 4.0;
+    boolean uninformativeIntercept = true;
+    RegressionPrior prior
+        = RegressionPrior.gaussian(priorVariance,
+                                   uninformativeIntercept);
+    int priorBlockSize = 3;
+
+    double initialLearningRate = 0.05;
+    double learningRateDecay = 0.995;
+    AnnealingSchedule annealingSchedule
+        = AnnealingSchedule.exponential(initialLearningRate,
+                                        learningRateDecay);
+
+    double minImprovement = 0.00001;
+    int minEpochs = 10;
+    int maxEpochs = 5000;
+
+    Reporter reporter
+        = Reporters.stdOut().setLevel(LogLevel.DEBUG);
+    
+    
+    ChainCrfFeatureExtractor<String> featureExtractor
+    = new SimpleChainCrfFeatureExtractor();
+
+    
+    
+    ChainCrfChunker crfChunker = ChainCrfChunker.estimate(corpus,
+                               tagChunkCodec,
+                               tokenizerFactory,
+                               featureExtractor,
+                               addIntercept,
+                               minFeatureCount,
+                               cacheFeatures,
+                               prior,
+                               priorBlockSize,
+                               annealingSchedule,
+                               minImprovement,
+                               minEpochs,
+                               maxEpochs,
+                               reporter);
+    
+    
+        
+		/*
 		GeneMatcher matcher = new GeneMatcher();
 		matcher.init();
+		*/
 
 		// List<String> genes = new ArrayList<String>();
 
@@ -305,7 +415,7 @@ public class GeneMatcher {
 		// chunkerEstimator=matcher.trainHMM(factory,hmmEstimator,"Ressources/dyctionary_genenames.txt");
 		// chunkerEstimator.handle(arg0);
 
-		System.out.println("Setting up Data Parser");
+		//System.out.println("Setting up Data Parser");
 		// @SuppressWarnings("deprecation")
 		// GeneTagParser parser = new GeneTagParser(); // PLEASE IGNORE
 		// DEPRECATION WARNING
