@@ -465,23 +465,6 @@ public class GeneMatcher {
 		// modelFile);
 		// AbstractExternalizable.compileTo(chunkerEstimator,modelFile);
 
-		/*
-		 * 
-		 * TrieDictionary<String> dictionary=matcher.readDictionary(
-		 * "Ressources/dyctionary_genenames.txt");
-		 * 
-		 * ExactDictionaryChunker dictionaryChunkerTT = new
-		 * ExactDictionaryChunker(dictionary,
-		 * IndoEuropeanTokenizerFactory.INSTANCE, true,true); String text=
-		 * "the the the fsdfs fsi wedw zzzz iiii";
-		 * 
-		 * double maxDistance = 2.0; WeightedEditDistance editDistance = new
-		 * FixedWeightEditDistance(0,-1,-1,-1,Double.NaN);
-		 * ApproxDictionaryChunker chunker = new
-		 * ApproxDictionaryChunker(dictionary,
-		 * IndoEuropeanTokenizerFactory.INSTANCE, editDistance,maxDistance);
-		 * matcher.chunk(dictionaryChunkerTT,text);
-		 */
 	}
 
 }
