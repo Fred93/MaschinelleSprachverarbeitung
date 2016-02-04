@@ -196,7 +196,7 @@ public class GeneMatcher {
 		return(false);
 	}
 	
-	public void writeResult(ArrayList<String> res, String filename){
+	public static void writeResult(ArrayList<String> res, String filename){
 		BufferedWriter bw = null;
 		try {
 			bw = new BufferedWriter(new FileWriter(filename));
@@ -355,7 +355,7 @@ public class GeneMatcher {
 
     double minImprovement = 0.00001;
     int minEpochs = 10;
-    int maxEpochs = 50;
+    int maxEpochs = 10;
 
     Reporter reporter
         = Reporters.stdOut().setLevel(LogLevel.DEBUG);
@@ -398,9 +398,42 @@ public class GeneMatcher {
     
     System.out.println("\nEvaluation");
     System.out.println(evaluator);
-  
     
     
+    System.out.println("Tagging....");
+    
+    //ArrayList<String> resultTagger = new ArrayList<String>();
+    //ArrayList<String> resultTaggerTag = new ArrayList<String>();
+    
+    
+	Chunking chunking=crfChunker.chunk("High-dose growth hormone does not affect proinflammatory cytokine (tumor necrosis factor-alpha, interleukin-6, and interferon-gamma ) release from activated peripheral blood mononuclear cells or after minimal to moderate surgical stress.");
+	CharSequence cs = chunking.charSequence();
+	System.out.println(cs.toString());
+	System.out.println(chunking.chunkSet());
+	
+	
+	
+	/*
+	if (chunking.chunkSet().size() == 0){
+		resultTagger.add("text" + "\tO");
+		resultTaggerTag.add("O");
+	}
+	for (Chunk chunk : chunking.chunkSet()) {
+		int start = chunk.start();
+		int end = chunk.end();
+		CharSequence str = cs.subSequence(start, end);
+		double distance = chunk.score();
+		String match = chunk.type();
+		//System.out.printf("%15s  %15s   %8.1f\n", str, match, distance);
+		resultTagger.add("text" + "\tB-protein");
+		resultTaggerTag.add("B-protein");
+	}
+    
+	GeneMatcher.writeResult(resultTagger, "result.iob");
+	
+	*/
+	
+	
     //corpus.visitTest_untaged(evaluator);
     
 		/*

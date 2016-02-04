@@ -40,7 +40,26 @@ public class GeneCorpus
         visit(TEST_FILE_NAME,handler);
     }
 
+    public void visitTest_untaged(ObjectHandler<Chunking> handler) throws IOException{
+    	TagChunkCodec codec
+        = new IoTagChunkCodec(); 
+
+    ObjectHandler<Tagging<String>> tagHandler
+        = TagChunkCodecAdapters
+        .chunkingToTagging(codec,handler);
+
     
+    Parser<ObjectHandler<Tagging<String>>> parser
+        = new LineTaggingParser(TOKEN_TAG_LINE_REGEX_TEST,
+                                TOKEN_GROUP, TAG_GROUP,
+                                IGNORE_LINE_REGEX,
+                                EOS_REGEX);
+    parser.setHandler(tagHandler);
+    File file = new File(mConllDataDir,Test_UNTAGED);
+    parser.parse(Test_UNTAGED);
+    
+    	
+    }
     
     private void visit(String fileName, 
                        final ObjectHandler<Chunking> handler)
@@ -91,6 +110,7 @@ public class GeneCorpus
     static final String TRAIN_FILE_NAME = "training5_annotated.iob";
     //static final String DEV_FILE_NAME = "eng.testa";
     static final String TEST_FILE_NAME = "training5_annotated.iob";
+    static final String Test_UNTAGED = "test5_not_annotated.iob";
 
 
 }
