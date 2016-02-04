@@ -40,6 +40,8 @@ public class GeneCorpus
         visit(TEST_FILE_NAME,handler);
     }
 
+    
+    
     private void visit(String fileName, 
                        final ObjectHandler<Chunking> handler)
         throws IOException {
@@ -51,6 +53,16 @@ public class GeneCorpus
             = TagChunkCodecAdapters
             .chunkingToTagging(codec,handler);
 
+        if (fileName==TRAIN_FILE_NAME){
+         Parser<ObjectHandler<Tagging<String>>> parser
+             = new LineTaggingParser(TOKEN_TAG_LINE_REGEX,
+                                     TOKEN_GROUP, TAG_GROUP,
+                                     IGNORE_LINE_REGEX,
+                                     EOS_REGEX);
+         parser.setHandler(tagHandler);
+         File file = new File(mConllDataDir,fileName);
+         parser.parse(file);
+        }else{
         Parser<ObjectHandler<Tagging<String>>> parser
             = new LineTaggingParser(TOKEN_TAG_LINE_REGEX,
                                     TOKEN_GROUP, TAG_GROUP,
@@ -59,10 +71,13 @@ public class GeneCorpus
         parser.setHandler(tagHandler);
         File file = new File(mConllDataDir,fileName);
         parser.parse(file);
+        }
     }
 
     static final String TOKEN_TAG_LINE_REGEX
         = "(\\S+)\\s(O|[B|I]-\\S+)"; // token posTag chunkTag entityTag
+    static final String TOKEN_TAG_LINE_REGEX_TEST
+    = "(\\S+)\\s"; // token posTag chunkTag entityTag
 
     static final int TOKEN_GROUP = 1; // token
     static final int TAG_GROUP = 2;   // entityTag

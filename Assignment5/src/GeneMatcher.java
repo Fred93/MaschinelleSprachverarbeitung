@@ -4,42 +4,27 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Scanner;
 
-import com.aliasi.tokenizer.LowerCaseTokenizerFactory;
 import com.aliasi.chunk.BioTagChunkCodec;
-import com.aliasi.chunk.CharLmHmmChunker;
 import com.aliasi.chunk.Chunk;
+import com.aliasi.chunk.ChunkerEvaluator;
 import com.aliasi.chunk.Chunking;
 import com.aliasi.chunk.TagChunkCodec;
-import com.aliasi.corpus.Corpus;
 import com.aliasi.corpus.ObjectHandler;
-import com.aliasi.corpus.Parser;
-import com.aliasi.corpus.StringParser;
 import com.aliasi.crf.ChainCrfChunker;
 import com.aliasi.crf.ChainCrfFeatureExtractor;
-import com.aliasi.dict.ApproxDictionaryChunker;
 import com.aliasi.dict.DictionaryEntry;
 import com.aliasi.dict.ExactDictionaryChunker;
 import com.aliasi.dict.MapDictionary;
-import com.aliasi.dict.TrieDictionary;
-import com.aliasi.hmm.HmmCharLmEstimator;
 import com.aliasi.io.LogLevel;
 import com.aliasi.io.Reporter;
 import com.aliasi.io.Reporters;
-import com.aliasi.spell.FixedWeightEditDistance;
-import com.aliasi.spell.WeightedEditDistance;
 import com.aliasi.stats.AnnealingSchedule;
 import com.aliasi.stats.RegressionPrior;
-import com.aliasi.tag.Tagging;
 import com.aliasi.tokenizer.IndoEuropeanTokenizerFactory;
-import com.aliasi.tokenizer.LowerCaseTokenizerFactory;
 import com.aliasi.tokenizer.TokenizerFactory;
 import com.aliasi.util.AbstractExternalizable;
-//import com.aliasi.corpus.TagHandler;
-import com.aliasi.util.Arrays;
 
 public class GeneMatcher {
 	static final double CHUNK_SCORE = 1.0;
@@ -95,7 +80,7 @@ public class GeneMatcher {
 		Content content = readFile("Ressources/training_annotated.iob");
 		
 		//content = removeStopwords(content, stopwords);
-		chunkContent(dictionaryChunker, content);
+		//chunkContent(dictionaryChunker, content);
 		
 		
 		
@@ -266,13 +251,13 @@ public class GeneMatcher {
 		return(new Content(words, tags));
 	}
 	
-	public void chunkContent(ExactDictionaryChunker chunker, Content content){
+	public void chunkContent(ChainCrfChunker crfChunker, GeneCorpus corpus){
 		resultTagger = new ArrayList<String>();
 		res= new ArrayList<String>();
-		ArrayList<String> words = content.getWords();
-		for (String line : words) {
-			this.chunk(chunker, line);
-		}
+	//	ArrayList<String> words = corpus.;
+		//for (String line : words) {
+		//	this.chunk(crfChunker, line);
+		//}
 	}
 	
 	/*public void chunkFile(ExactDictionaryChunker chunker, String dir){
@@ -370,7 +355,7 @@ public class GeneMatcher {
 
     double minImprovement = 0.00001;
     int minEpochs = 10;
-    int maxEpochs = 5000;
+    int maxEpochs = 50;
 
     Reporter reporter
         = Reporters.stdOut().setLevel(LogLevel.DEBUG);
@@ -397,7 +382,27 @@ public class GeneMatcher {
                                reporter);
     
     
-        
+    
+    System.out.println("compiling");
+    @SuppressWarnings("unchecked") // required for serialized compile
+        ChainCrfChunker compiledCrfChunker
+        = (ChainCrfChunker)
+        AbstractExternalizable.serializeDeserialize(crfChunker);
+    System.out.println("compiled");
+
+    System.out.println("\nEvaluating");
+    ChunkerEvaluator evaluator
+        = new ChunkerEvaluator(compiledCrfChunker);
+
+    corpus.visitTest(evaluator);
+    
+    System.out.println("\nEvaluation");
+    System.out.println(evaluator);
+  
+    
+    
+    //corpus.visitTest_untaged(evaluator);
+    
 		/*
 		GeneMatcher matcher = new GeneMatcher();
 		matcher.init();
