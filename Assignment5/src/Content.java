@@ -4,9 +4,9 @@ public class Content {
 	public ArrayList<String> words;
 	public ArrayList<String> tags;
 	
-	public Content(ArrayList<String> words, ArrayList<String> tags){
+	public Content(ArrayList<String> words){
 		this.words = words;
-		this.tags = tags;
+		
 	}
 
 	public ArrayList<String> getWords() {

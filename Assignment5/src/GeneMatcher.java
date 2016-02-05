@@ -36,60 +36,47 @@ public class GeneMatcher {
 	private ExactDictionaryChunker dictionaryChunker;
 	private boolean isTagged = true;
 	private ArrayList<String> stopwords;
+	private ChainCrfChunker crfChunker;
 	private ArrayList<String> resultTagger;
 	private ArrayList<String> resultTaggerTag = new ArrayList<String>();
 	private ArrayList<String> res = new ArrayList<String>();
 
+	public GeneMatcher(ChainCrfChunker crfChunker) {
+		this.crfChunker=crfChunker;
+		
+		// TODO Auto-generated constructor stub
+	}
+
+
+
 	private void init() {
-		File corpusFile = new File("Ressources/training_annotated.iob");
-		File modelFile = new File("Ressources/model");
+		
 
 		// Read Dictionary
 		dictionary = this.readDictionary("Ressources/dyctionary_genenames.txt");
 		stopwords = readStopwords("Ressources/stopwords");
 		
 		dictionary = removeStopwords(dictionary, stopwords);
-		// Read Input text
-
-		// Set TokenizerFactory
-		myTokenizerFactory = IndoEuropeanTokenizerFactory.INSTANCE;
-
-		// Init Chunker
-		dictionaryChunker = new ExactDictionaryChunker(dictionary, IndoEuropeanTokenizerFactory.INSTANCE, true, false); // not
 		
-		// case
-		/*Corpus<ObjectHandler<Chunking>> corpus
-        = new GeneCorpus();																											// sensitive
-		
-		ChainCrfChunker crfChunker = ChainCrfChunker.estimate(corpus,
-                                   tagChunkCodec,
-                                   tokenizerFactory,
-                                   featureExtractor,
-                                   addIntercept,
-                                   minFeatureCount,
-                                   cacheFeatures,
-                                   prior,
-                                   priorBlockSize,
-                                   annealingSchedule,
-                                   minImprovement,
-                                   minEpochs,
-                                   maxEpochs,
-                                   reporter);
-		*/
-		
-		Content content = readFile("Ressources/training_annotated.iob");
+		Content content = readFile("Ressources/test5_not_annotated.iob");
 		
 		//content = removeStopwords(content, stopwords);
-		//chunkContent(dictionaryChunker, content);
+		chunkContent(crfChunker, content);
 		
-		
+		/*for (String a : resultTagger){
+			
+			System.out.println(a);
+		}*/
 		
 		writeResult(resultTagger, "result.iob");
 		
-		evaluate(content);
+		//evaluate(content);
 	}
 	
 
+	
+	
+	
 
 	public MapDictionary<String> readDictionary(String dic_path) {
 		MapDictionary<String> dictionary = new MapDictionary<String>();
@@ -132,8 +119,8 @@ public class GeneMatcher {
 		return newList;
 	}
 
-	private void chunk(ExactDictionaryChunker chunker, String text) {
-		Chunking chunking = chunker.chunk(text);
+	private void chunk(ChainCrfChunker crfChunker2, String text) {
+		Chunking chunking = crfChunker2.chunk(text);
 		CharSequence cs = chunking.charSequence();
 		if (chunking.chunkSet().size() == 0){
 			resultTagger.add(text + "\tO");
@@ -146,8 +133,8 @@ public class GeneMatcher {
 			double distance = chunk.score();
 			String match = chunk.type();
 			//System.out.printf("%15s  %15s   %8.1f\n", str, match, distance);
-			resultTagger.add(text + "\tB-protein");
-			resultTaggerTag.add("B-protein");
+			resultTagger.add(text + "\t" + chunk);
+			resultTaggerTag.add(chunk.toString());
 		}
 	}
 	
@@ -220,7 +207,7 @@ public class GeneMatcher {
 	
 	public Content readFile(String path){
 		ArrayList<String> words = new ArrayList<String>();
-		ArrayList<String> tags = new ArrayList<String>();
+		//ArrayList<String> tags = new ArrayList<String>();
 		Scanner scan = null;
 		try {
 			scan = new Scanner(new File(path));
@@ -229,13 +216,13 @@ public class GeneMatcher {
 				if (isTagged){
 					//Ignore Empty Lines
 					if (!(line.equals("")||line.equals(" "))){
-						String[] s = line.split("\t");
+						//String[] s = line.split("\t");
 						
 						//is Tagged
-						if (s.length == 2){
-							words.add(s[0]);
-							tags.add(s[1]);
-						}
+						//if (s.length == 2){
+							words.add(line);
+							//tags.add(s[1]);
+						//}
 					}
 				}
 			}
@@ -248,16 +235,17 @@ public class GeneMatcher {
 			}
 		}
 		
-		return(new Content(words, tags));
+		return(new Content(words));
+		
 	}
 	
-	public void chunkContent(ChainCrfChunker crfChunker, GeneCorpus corpus){
+	public void chunkContent(ChainCrfChunker crfChunker, Content content){
 		resultTagger = new ArrayList<String>();
 		res= new ArrayList<String>();
-	//	ArrayList<String> words = corpus.;
-		//for (String line : words) {
-		//	this.chunk(crfChunker, line);
-		//}
+	    ArrayList<String> words = content.getWords();
+	        for (String line : words) {
+		 	this.chunk(crfChunker, line);
+		}
 	}
 	
 	/*public void chunkFile(ExactDictionaryChunker chunker, String dir){
@@ -309,7 +297,6 @@ public class GeneMatcher {
 	*/
 
 	// java TrainGeneTag <trainingInputFile> <modelOutputFile>
-	@SuppressWarnings("deprecation")
 	public static void main(String[] args) throws IOException {
 		
 		File dataDir = new File("Ressources");
@@ -406,65 +393,17 @@ public class GeneMatcher {
     //ArrayList<String> resultTaggerTag = new ArrayList<String>();
     
     
+   GeneMatcher matcher = new GeneMatcher(crfChunker);
+	matcher.init();
+    
+    /*
 	Chunking chunking=crfChunker.chunk("High-dose growth hormone does not affect proinflammatory cytokine (tumor necrosis factor-alpha, interleukin-6, and interferon-gamma ) release from activated peripheral blood mononuclear cells or after minimal to moderate surgical stress.");
 	CharSequence cs = chunking.charSequence();
 	System.out.println(cs.toString());
 	System.out.println(chunking.chunkSet());
-	
-	
-	
-	/*
-	if (chunking.chunkSet().size() == 0){
-		resultTagger.add("text" + "\tO");
-		resultTaggerTag.add("O");
-	}
-	for (Chunk chunk : chunking.chunkSet()) {
-		int start = chunk.start();
-		int end = chunk.end();
-		CharSequence str = cs.subSequence(start, end);
-		double distance = chunk.score();
-		String match = chunk.type();
-		//System.out.printf("%15s  %15s   %8.1f\n", str, match, distance);
-		resultTagger.add("text" + "\tB-protein");
-		resultTaggerTag.add("B-protein");
-	}
-    
-	GeneMatcher.writeResult(resultTagger, "result.iob");
-	
 	*/
 	
 	
-    //corpus.visitTest_untaged(evaluator);
-    
-		/*
-		GeneMatcher matcher = new GeneMatcher();
-		matcher.init();
-		*/
-
-		// List<String> genes = new ArrayList<String>();
-
-		// TokenizerFactory factory
-		// = IndoEuropeanTokenizerFactory.INSTANCE;
-		// fCharLmEstimator hmmEstimator
-		// = new HmmCharLmEstimator(MAX_N_GRAM,NUM_CHARS,LM_INTERPOLATION);
-		// CharLmHmmChunker chunkerEstimator = new
-		// CharLmHmmChunker(factory,hmmEstimator);
-		// CharLmHmmChunker
-		// chunkerEstimator=matcher.trainHMM(factory,hmmEstimator,"Ressources/dyctionary_genenames.txt");
-		// chunkerEstimator.handle(arg0);
-
-		//System.out.println("Setting up Data Parser");
-		// @SuppressWarnings("deprecation")
-		// GeneTagParser parser = new GeneTagParser(); // PLEASE IGNORE
-		// DEPRECATION WARNING
-		// parser.setHandler(chunkerEstimator);
-		// System.out.println("Training with Data from File=" + corpusFile);
-		// parser.parse(corpusFile);
-
-		// System.out.println("Compiling and Writing Model to File=" +
-		// modelFile);
-		// AbstractExternalizable.compileTo(chunkerEstimator,modelFile);
-
 	}
 
 }
