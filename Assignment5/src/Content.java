@@ -1,20 +1,20 @@
 import java.util.ArrayList;
 
 public class Content {
-	public ArrayList<String> words;
+	public ArrayList<String> sententces;
 	public ArrayList<String> tags;
 	
-	public Content(ArrayList<String> words){
-		this.words = words;
+	public Content(ArrayList<String> sententces){
+		this.sententces = sententces;
 		
 	}
 
-	public ArrayList<String> getWords() {
-		return words;
+	public ArrayList<String> getSentences() {
+		return sententces;
 	}
 
-	public void setWords(ArrayList<String> words) {
-		this.words = words;
+	public void setWords(ArrayList<String> sententces) {
+		this.sententces = sententces;
 	}
 
 	public ArrayList<String> getTags() {

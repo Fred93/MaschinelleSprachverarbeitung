@@ -61,7 +61,8 @@ public class GeneMatcher {
 		Content content = readFile("Ressources/test5_not_annotated.iob");
 		
 		//content = removeStopwords(content, stopwords);
-		chunkContent(crfChunker, content);
+		System.out.println("chunking...");
+		chunkContent(content);
 		
 		/*for (String a : resultTagger){
 			
@@ -119,28 +120,65 @@ public class GeneMatcher {
 		return newList;
 	}
 
-	private void chunk(ChainCrfChunker crfChunker2, String text) {
-		Chunking chunking = crfChunker2.chunk(text);
+	private void chunk(String text) {
+		Chunking chunking = crfChunker.chunk(text);
 		CharSequence cs = chunking.charSequence();
+		
+		//System.out.println("cs:"+ cs);
+		//System.out.println("ChunkSet"+ chunking.chunkSet());
+		String[] te = text.split(" ");
+		
 		if (chunking.chunkSet().size() == 0){
-			resultTagger.add(text + "\tO");
-			resultTaggerTag.add("O");
+			
+			for (String word :te){
+					resultTagger.add(word + "\tO");
+					resultTaggerTag.add("O");
 		}
+		}
+			String lastMatch=null;
+			Boolean passedLast=false;
 		for (Chunk chunk : chunking.chunkSet()) {
+			passedLast=false;
 			int start = chunk.start();
 			int end = chunk.end();
 			CharSequence str = cs.subSequence(start, end);
 			double distance = chunk.score();
 			String match = chunk.type();
-			//System.out.printf("%15s  %15s   %8.1f\n", str, match, distance);
-			resultTagger.add(text + "\t" + chunk);
-			resultTaggerTag.add(chunk.toString());
-		}
+			System.out.printf("%15s  %15s   %8.1f\n", str, match, distance);			
+		  for (String word : te){
+			if(lastMatch==null){
+				passedLast=true;
+			}else if(word.equals(lastMatch)){
+				passedLast=true;
+				continue;
+			}
+			if(passedLast){	 
+				if(word.equals(str)){
+					resultTagger.add(word + "\t" + match);
+					
+					//System.out.println(word + "\t" + match);
+					
+					resultTaggerTag.add(match);
+					lastMatch=str.toString();
+					break;
+					
+				}else{
+					
+					//System.out.println(word + "\tO");
+					resultTagger.add(word + "\tO");
+					resultTaggerTag.add("O");
+			    	}
+			}
+		    	}
+	    	}
+		
+	 	
 	}
+	
 	
 	public void evaluate(Content content){
 		res = content.getTags();
-		ArrayList<String> word = content.getWords();
+		ArrayList<String> word = content.getSentences();
 		System.out.println(res.size());
 		System.out.println(resultTaggerTag.size());
 		int FP = 0;
@@ -206,23 +244,25 @@ public class GeneMatcher {
 	}
 	
 	public Content readFile(String path){
-		ArrayList<String> words = new ArrayList<String>();
+		ArrayList<String> sententces = new ArrayList<String>();
 		//ArrayList<String> tags = new ArrayList<String>();
 		Scanner scan = null;
 		try {
 			scan = new Scanner(new File(path));
+			String sentence="";
 			while (scan.hasNextLine()) {
 				String line = scan.nextLine();
 				if (isTagged){
 					//Ignore Empty Lines
-					if (!(line.equals("")||line.equals(" "))){
-						//String[] s = line.split("\t");
-						
-						//is Tagged
-						//if (s.length == 2){
-							words.add(line);
-							//tags.add(s[1]);
-						//}
+					if (!(line.equals("")||line.equals(" ")||line.matches("###MEDLINE:\\d+"))){
+						if(line.equals(".")){
+							sentence=sentence+" "+line;	
+							sententces.add(sentence);
+							System.out.println(sentence);
+							sentence="";
+						}else{
+							sentence=sentence+" "+line;	
+						}
 					}
 				}
 			}
@@ -235,16 +275,16 @@ public class GeneMatcher {
 			}
 		}
 		
-		return(new Content(words));
+		return(new Content(sententces));
 		
 	}
 	
-	public void chunkContent(ChainCrfChunker crfChunker, Content content){
+	public void chunkContent(Content content){
 		resultTagger = new ArrayList<String>();
 		res= new ArrayList<String>();
-	    ArrayList<String> words = content.getWords();
-	        for (String line : words) {
-		 	this.chunk(crfChunker, line);
+	    ArrayList<String> sententces = content.getSentences();
+	        for (String line : sententces) {
+		 	this.chunk(line);
 		}
 	}
 	
@@ -393,7 +433,7 @@ public class GeneMatcher {
     //ArrayList<String> resultTaggerTag = new ArrayList<String>();
     
     
-   GeneMatcher matcher = new GeneMatcher(crfChunker);
+    GeneMatcher matcher = new GeneMatcher(crfChunker);
 	matcher.init();
     
     /*

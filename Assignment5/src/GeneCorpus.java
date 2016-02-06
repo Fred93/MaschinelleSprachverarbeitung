@@ -51,7 +51,7 @@ public class GeneCorpus
     
     Parser<ObjectHandler<Tagging<String>>> parser
         = new LineTaggingParser(TOKEN_TAG_LINE_REGEX_TEST,
-                                TOKEN_GROUP, TAG_GROUP,
+                                0, 0,
                                 IGNORE_LINE_REGEX,
                                 EOS_REGEX);
     parser.setHandler(tagHandler);
