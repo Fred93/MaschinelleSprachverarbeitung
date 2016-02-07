@@ -15,8 +15,10 @@ import com.aliasi.chunk.BioTagChunkCodec;
 import com.aliasi.chunk.Chunk;
 import com.aliasi.chunk.ChunkerEvaluator;
 import com.aliasi.chunk.Chunking;
+import com.aliasi.chunk.ChunkingEvaluation;
 import com.aliasi.chunk.TagChunkCodec;
 import com.aliasi.classify.Classified;
+import com.aliasi.classify.PrecisionRecallEvaluation;
 import com.aliasi.corpus.ObjectHandler;
 import com.aliasi.crf.ChainCrfChunker;
 import com.aliasi.crf.ChainCrfFeatureExtractor;
@@ -259,7 +261,6 @@ public class GeneMatcher {
 						if (line.equals(".")) {
 							sentence = sentence + " " + line;
 							sententces.add(sentence);
-							System.out.println(sentence);
 							sentence = "";
 						} else {
 							sentence = sentence + " " + line;
@@ -362,171 +363,153 @@ public class GeneMatcher {
 				scan.close();
 			}
 		}
-		/*
-		 * ObjectHandler<Chunking> cvCreator = new ObjectHandler<Chunking>() {
-		 * public void handle(Chunking chunking) {
-		 * cvCorpus.handle((Classified<CharSequence>) chunking); } };
-		 * 
-		 * corpus.visitCorpus(cvCreator);
-		 */
-		System.out.println(sententces.size());
-		int amountTotal = sententces.size();
-		int amountSet = amountTotal / 10;
-		int random;
-		int[] test = new int[amountSet];
-		int[] training = new int[amountTotal - amountSet];
-		for (int i = 0; i < amountSet; i++) {
-			while (true) {
-				random = (int) (Math.random() * amountTotal);
-				boolean inSet=false;
-				for (int j = 0; j < test.length; j++) {
-					if (test[j] == random){
-						inSet = true;
+		
+		double fMeasure = 0;
+		double recall = 0;
+		double precision = 0;
+		for (int n = 0; n < 10; n++) {
+			int amountTotal = sententces.size();
+			int amountSet = amountTotal / 10;
+			int random;
+			int[] test = new int[amountSet];
+			int[] training = new int[amountTotal - amountSet];
+			for (int i = 0; i < amountSet; i++) {
+				while (true) {
+					random = (int) (Math.random() * amountTotal);
+					boolean inSet=false;
+					for (int j = 0; j < test.length; j++) {
+						if (test[j] == random){
+							inSet = true;
+						}
+					}
+					if (!inSet){
+						test[i] = random;
+						break;
 					}
 				}
-				if (!inSet){
-					test[i] = random;
-					break;
+			}
+			int counter = 0;
+			for (int i = 0; i < amountTotal; i++) {
+				boolean inTest = false;
+				for (int j = 0; j < test.length; j++) {
+					if (test[j] == i){
+						inTest=true;
+					}
+				}
+				if (!inTest){
+					training[counter] = i;
+					counter ++;
 				}
 			}
-		}
-		for (int i = 0; i < test.length; i++) {
-			System.out.println(test[i]);
-		}
-		int counter = 0;
-		for (int i = 0; i < amountTotal; i++) {
-			boolean inTest = false;
-			for (int j = 0; j < test.length; j++) {
-				if (test[j] == i){
-					inTest=true;
+	
+			//corpus.visitTest(printer);
+	
+			//Create TestFile
+			String testDir = "CVTestFile.iob";
+			BufferedWriter bw = null;
+			try {
+				bw = new BufferedWriter(new FileWriter("Ressources/"+testDir));
+				for (int i = 0; i < test.length; i++) {
+					ArrayList<String> curSentence = sententces.get(test[i]);
+					for (String string : curSentence) {
+						bw.write(string + "\n");
+					}
+				}
+				bw.flush();
+			} catch (IOException e) {
+				e.printStackTrace();
+			} finally {
+				if (bw != null) {
+					try {
+						bw.close();
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 				}
 			}
-			if (!inTest){
-				training[counter] = i;
-				counter ++;
+			
+			//Create TrainingFile
+			String trainDir = "CVTrainingFile.iob";
+			try {
+				bw = new BufferedWriter(new FileWriter("Ressources/"+trainDir));
+				for (int i = 0; i < training.length; i++) {
+					ArrayList<String> curSentence = sententces.get(training[i]);
+					for (String string : curSentence) {
+						bw.write(string + "\n");
+					}
+				}
+				bw.flush();
+			} catch (IOException e) {
+				e.printStackTrace();
+			} finally {
+				if (bw != null) {
+					try {
+						bw.close();
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
 			}
+			
+			TokenizerFactory tokenizerFactory = IndoEuropeanTokenizerFactory.INSTANCE;
+			boolean enforceConsistency = true;
+			TagChunkCodec tagChunkCodec = new BioTagChunkCodec(tokenizerFactory, enforceConsistency);
+	
+			int minFeatureCount = 1;
+	
+			boolean cacheFeatures = true;
+	
+			boolean addIntercept = true;
+	
+			double priorVariance = 4.0;
+			boolean uninformativeIntercept = true;
+			RegressionPrior prior = RegressionPrior.gaussian(priorVariance, uninformativeIntercept);
+			int priorBlockSize = 3;
+	
+			double initialLearningRate = 0.05;
+			double learningRateDecay = 0.995;
+			AnnealingSchedule annealingSchedule = AnnealingSchedule.exponential(initialLearningRate, learningRateDecay);
+	
+			double minImprovement = 0.00001;
+			int minEpochs = 1;
+			int maxEpochs = 50;
+	
+			Reporter reporter = Reporters.stdOut().setLevel(LogLevel.DEBUG);
+	
+			ChainCrfFeatureExtractor<String> featureExtractor = new SimpleChainCrfFeatureExtractor();
+	
+			corpus.setTestFile(testDir);
+			corpus.setTrainFile(trainDir);
+			ChainCrfChunker crfChunker = ChainCrfChunker.estimate(corpus, tagChunkCodec, tokenizerFactory, featureExtractor,
+					addIntercept, minFeatureCount, cacheFeatures, prior, priorBlockSize, annealingSchedule, minImprovement,
+					minEpochs, maxEpochs, reporter);
+	
+			
+			ChainCrfChunker compiledCrfChunker = (ChainCrfChunker) AbstractExternalizable.serializeDeserialize(crfChunker);
+			
+			File modelFile = new File("model");
+			AbstractExternalizable.serializeTo(crfChunker, modelFile);
+			
+			System.out.println("\nEvaluating");
+			ChunkerEvaluator evaluator = new ChunkerEvaluator(compiledCrfChunker);
+	
+			corpus.visitTest(evaluator);
+			double curFmeasure = evaluator.evaluation().precisionRecallEvaluation().fMeasure();
+			double curRecall = evaluator.evaluation().precisionRecallEvaluation().recall();
+			double curPrecision = evaluator.evaluation().precisionRecallEvaluation().precision();
+			System.out.println("FMeasure in Fold " + n + ": " + curFmeasure);
+			fMeasure = fMeasure + curFmeasure;
+			recall = recall + curRecall;
+			precision = precision + curPrecision;
 		}
+		System.out.println("Result CV: " + fMeasure/10);
+		System.out.println("Recall: " + recall);
+		System.out.println("Precision: " + precision);
 		
-		System.out.println("created inds for subset");
-		System.out.println(test.length);
-		System.out.println(training.length);
-		System.out.println("\nTRAIN");
-		System.out.println("\nTEST");
-		//corpus.visitTest(printer);
-
-		//Create TestFile
-		String testDir = "CVTestFile.iob";
-		BufferedWriter bw = null;
-		try {
-			bw = new BufferedWriter(new FileWriter("Ressources/"+testDir));
-			for (int i = 0; i < test.length; i++) {
-				System.out.println(test[i]);
-				ArrayList<String> curSentence = sententces.get(test[i]);
-				for (String string : curSentence) {
-					bw.write(string + "\n");
-				}
-			}
-			bw.flush();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} finally {
-			if (bw != null) {
-				try {
-					bw.close();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-		}
-		
-		//Create TrainingFile
-		String trainDir = "CVTrainingFile.iob";
-		try {
-			bw = new BufferedWriter(new FileWriter("Ressources/"+trainDir));
-			for (int i = 0; i < training.length; i++) {
-				System.out.println(training[i]);
-				ArrayList<String> curSentence = sententces.get(training[i]);
-				for (String string : curSentence) {
-					bw.write(string + "\n");
-				}
-			}
-			bw.flush();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} finally {
-			if (bw != null) {
-				try {
-					bw.close();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-		}
-		
-		TokenizerFactory tokenizerFactory = IndoEuropeanTokenizerFactory.INSTANCE;
-		boolean enforceConsistency = true;
-		TagChunkCodec tagChunkCodec = new BioTagChunkCodec(tokenizerFactory, enforceConsistency);
-
-		int minFeatureCount = 1;
-
-		boolean cacheFeatures = true;
-
-		boolean addIntercept = true;
-
-		double priorVariance = 4.0;
-		boolean uninformativeIntercept = true;
-		RegressionPrior prior = RegressionPrior.gaussian(priorVariance, uninformativeIntercept);
-		int priorBlockSize = 3;
-
-		double initialLearningRate = 0.05;
-		double learningRateDecay = 0.995;
-		AnnealingSchedule annealingSchedule = AnnealingSchedule.exponential(initialLearningRate, learningRateDecay);
-
-		double minImprovement = 0.00001;
-		int minEpochs = 10;
-		int maxEpochs = 500;
-
-		Reporter reporter = Reporters.stdOut().setLevel(LogLevel.DEBUG);
-
-		ChainCrfFeatureExtractor<String> featureExtractor = new SimpleChainCrfFeatureExtractor();
-
-		corpus.setTestFile(testDir);
-		corpus.setTrainFile(trainDir);
-		ChainCrfChunker crfChunker = ChainCrfChunker.estimate(corpus, tagChunkCodec, tokenizerFactory, featureExtractor,
-				addIntercept, minFeatureCount, cacheFeatures, prior, priorBlockSize, annealingSchedule, minImprovement,
-				minEpochs, maxEpochs, reporter);
-
-		System.out.println("compiling");
-		@SuppressWarnings("unchecked") // required for serialized compile
-		ChainCrfChunker compiledCrfChunker = (ChainCrfChunker) AbstractExternalizable.serializeDeserialize(crfChunker);
-		System.out.println("compiled");
-
-		System.out.println("\nEvaluating");
-		ChunkerEvaluator evaluator = new ChunkerEvaluator(compiledCrfChunker);
-
-		corpus.visitTest(evaluator);
-
-		System.out.println("\nEvaluation");
-		System.out.println(evaluator);
-
-		System.out.println("Tagging....");
-
-		// ArrayList<String> resultTagger = new ArrayList<String>();
-		// ArrayList<String> resultTaggerTag = new ArrayList<String>();
-
-		GeneMatcher matcher = new GeneMatcher(crfChunker);
-		matcher.init();
-
-		/*
-		 * Chunking chunking=crfChunker.chunk(
-		 * "High-dose growth hormone does not affect proinflammatory cytokine (tumor necrosis factor-alpha, interleukin-6, and interferon-gamma ) release from activated peripheral blood mononuclear cells or after minimal to moderate surgical stress."
-		 * ); CharSequence cs = chunking.charSequence();
-		 * System.out.println(cs.toString());
-		 * System.out.println(chunking.chunkSet());
-		 */
-
+		//GeneMatcher matcher = new GeneMatcher(crfChunker);
+		//matcher.init();
 	}
 
 }
