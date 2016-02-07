@@ -25,6 +25,14 @@ public class GeneCorpus
         mConllDataDir = conllMungedDataDir;
 
     }
+    
+    public void setTestFile(String s){
+    	TEST_FILE_NAME = s;
+    }
+    
+    public void setTrainFile(String s){
+    	TRAIN_FILE_NAME = s;
+    }
 
     public void visitTrain(ObjectHandler<Chunking> handler)
         throws IOException {
@@ -107,9 +115,9 @@ public class GeneCorpus
     static final String EOS_REGEX
         = "\\A\\Z"; 
 
-    static final String TRAIN_FILE_NAME = "training5_annotated.iob";
+    static String TRAIN_FILE_NAME = "training5_annotated.iob";
     //static final String DEV_FILE_NAME = "eng.testa";
-    static final String TEST_FILE_NAME = "training5_annotated.iob";
+    static String TEST_FILE_NAME = "training5_annotated.iob";
     static final String Test_UNTAGED = "test5_not_annotated.iob";
 
 
