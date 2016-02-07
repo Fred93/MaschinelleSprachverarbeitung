@@ -255,7 +255,7 @@ public class GeneMatcher {
 				if (isTagged){
 					//Ignore Empty Lines
 					if (!(line.equals("")||line.equals(" ")||line.matches("###MEDLINE:\\d+"))){
-						if(line.equals(".")){
+						if(line.equals(".")||line.equals("?")||line.equals("!")){
 							sentence=sentence+" "+line;	
 							sententces.add(sentence);
 							System.out.println(sentence);
@@ -382,7 +382,7 @@ public class GeneMatcher {
 
     double minImprovement = 0.00001;
     int minEpochs = 10;
-    int maxEpochs = 10;
+    int maxEpochs = 5000;
 
     Reporter reporter
         = Reporters.stdOut().setLevel(LogLevel.DEBUG);
