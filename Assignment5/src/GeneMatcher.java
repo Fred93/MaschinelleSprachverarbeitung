@@ -317,7 +317,7 @@ public class GeneMatcher {
 	 */
 
 	// java TrainGeneTag <trainingInputFile> <modelOutputFile>
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] args) throws IOException, ClassNotFoundException {
 
 		
 
@@ -486,12 +486,16 @@ public class GeneMatcher {
 
 		double minImprovement = 0.00001;
 		int minEpochs = 10;
-		int maxEpochs = 500;
+		int maxEpochs = 5000;
 
 		Reporter reporter = Reporters.stdOut().setLevel(LogLevel.DEBUG);
 
-		ChainCrfFeatureExtractor<String> featureExtractor = new SimpleChainCrfFeatureExtractor();
+		ChainCrfFeatureExtractor<String> featureExtractor
+        = new ChunkerFeatureExtractor();
 
+		
+		
+		
 		corpus.setTestFile(testDir);
 		corpus.setTrainFile(trainDir);
 		ChainCrfChunker crfChunker = ChainCrfChunker.estimate(corpus, tagChunkCodec, tokenizerFactory, featureExtractor,

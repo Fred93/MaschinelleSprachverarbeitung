@@ -18,6 +18,9 @@ public class SimpleChainCrfFeatureExtractor
         return new SimpleChainCrfFeatures(tokens,tags);
     }
 
+    
+    
+    
     static class SimpleChainCrfFeatures
         extends ChainCrfFeatures<String> {
 
@@ -29,7 +32,7 @@ public class SimpleChainCrfFeatureExtractor
             return Collections
                 .singletonMap("TOK_" + token(n),
                               Integer.valueOf(1));
-        }
+        }	
         public Map<String,Integer> edgeFeatures(int n, int k) {
             return Collections
                 .singletonMap("PREV_TAG_" + tag(k),
