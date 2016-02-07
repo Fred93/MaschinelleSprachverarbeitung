@@ -18,7 +18,7 @@ import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.io.Serializable;
-
+import java.security.CodeSource;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -30,7 +30,7 @@ public class ChunkerFeatureExtractor
 
     static final long serialVersionUID = 123L;
 
-    static final File POS_HMM_FILE = new File("pos-en-general-brown.HiddenMarkovModel");
+    static final File POS_HMM_FILE = new File("../objects/pos-en-general-brown.HiddenMarkovModel");
 
     // unserializable, so rebuild in constructor from fil
     private final Tagger<String> mPosTagger;
@@ -39,10 +39,13 @@ public class ChunkerFeatureExtractor
         throws ClassNotFoundException, IOException {
 
         @SuppressWarnings("unchecked") // req for deserialize
+        CodeSource src = this.getClass().getProtectionDomain().getCodeSource();
+		String loc = src.getLocation().toString();
+		File hmmFile = new File(loc.substring(6, loc.length()-10) + "/objects/pos-en-general-brown.HiddenMarkovModel");
         HiddenMarkovModel posHmm
             = (HiddenMarkovModel)
             AbstractExternalizable
-            .readObject(POS_HMM_FILE);
+            .readObject(hmmFile);
 
         FastCache<String,double[]> emissionCache
             = new FastCache<String,double[]>(100000);

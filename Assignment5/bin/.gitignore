@@ -1,4 +1,9 @@
-/ChunkerFeatureExtractor.class
-/ChunkerFeatureExtractor$ChunkerFeatures.class
-/ChunkerFeatureExtractor$Externalizer.class
-/GeneMatcher$1.class
+/.DS_Store
+/CVTestFile.iob
+/CVTrainingFile.iob
+/crfModel
+/dyctionary_genenames.txt
+/stopwords
+/test5_not_annotated.iob
+/training5_annotated.iob
+/crfModel.model
