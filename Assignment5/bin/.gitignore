@@ -7,3 +7,4 @@
 /test5_not_annotated.iob
 /training5_annotated.iob
 /crfModel.model
+/pos-en-general-brown.HiddenMarkovModel
