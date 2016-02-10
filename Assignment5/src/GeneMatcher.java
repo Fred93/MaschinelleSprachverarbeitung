@@ -40,8 +40,8 @@ public class GeneMatcher {
 		ChainCrfChunker crfChunker = null;
 		 CodeSource src = this.getClass().getProtectionDomain().getCodeSource();
 		String loc = src.getLocation().toString();
-		//File modelFile = new File(loc.substring(5, loc.length()-10) + "/objects/crfModel.model");
-		File modelFile = new File("C:/Users/D059348/dev/HU/MaschinelleSprachverarbeitung/objects/crfModel.model");
+		File modelFile = new File(loc.substring(5, loc.length()-10) + "/objects/crfModel.model");
+		//File modelFile = new File("C:/Users/D059348/dev/HU/MaschinelleSprachverarbeitung/objects/crfModel.model");
 		try {
 			this.crfChunker = (ChainCrfChunker) AbstractExternalizable.readObject(modelFile);
 		} catch (ClassNotFoundException | IOException e) {
@@ -54,8 +54,26 @@ public class GeneMatcher {
 
 		// content = removeStopwords(content, stopwords);
 		System.out.println("chunking...");
-		chunkContent(content);
-		writeResult(resultTagger, resultDir);
+		BufferedWriter bw = null;
+		try {
+			bw = new BufferedWriter(new FileWriter(resultDir));
+			chunkContent(content, bw);
+			bw.flush();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			if (bw != null) {
+				try {
+					bw.close();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+			
+		
+		//writeResult(resultTagger, resultDir);
 	}
 
 	public MapDictionary<String> readDictionary(String dic_path) {
@@ -99,84 +117,44 @@ public class GeneMatcher {
 		return newList;
 	}
 
-	private void chunk(String text) {
+	private void chunk(String text, BufferedWriter bw) throws IOException {
 		if (text.equals("") ||text.equals(" ")|| text.matches("###MEDLINE:\\d+")){
-			resultTagger.add(text+"\n");
+			bw.write(text+"\n");
 			resultTaggerTag.add("O");
 		}else{
 			Chunking chunking = crfChunker.chunk(text);
 			CharSequence cs = chunking.charSequence();
 	        
-			// System.out.println("cs:"+ cs);
-			// System.out.println("ChunkSet"+ chunking.chunkSet());
 			String[] te = text.split(" ");
 	
 			if (chunking.chunkSet().size() == 0) {
 	
 				for (String word : te) {
 					if (word.equals("") ||word.equals(" ")|| word.matches("###MEDLINE:\\d+")){
-						resultTagger.add(word);
-						resultTaggerTag.add("O");
-					}else{
-						resultTagger.add(word + "\tO"+"\n");
+						bw.write(word);
 						resultTaggerTag.add("O");
 					}
 				}
 			}
-			int lastMatch = -1;
-			Boolean passedLast = false;
-			//System.out.println(chunking.charSequence());
-			//System.out.println(chunking.chunkSet().size());
-			for (Chunk chunk : chunking.chunkSet()) {
-				passedLast = false;
-				boolean reachedLastElement = false;
-				int start = chunk.start();
-				int end = chunk.end();
-				CharSequence str = cs.subSequence(start, end);
-				double distance = chunk.score();
-				String match = chunk.type();
-				for (int i = 0; i < te.length; i++) {
-					String word = te[i];
-					//System.out.println("WORD: " + word);
-					if (lastMatch == -1) {
-						passedLast = true;
-					} else if (i==lastMatch) {
-						System.out.println("TRUE");
-						passedLast = true;
-						continue;
-					}
-					if (passedLast) {
-						if(i == te.length-1){
-							reachedLastElement = true;
-						}
-						if (word.equals(str)) {
-							
-							resultTagger.add(word + "\t" + match+"\n");
-	
-							// System.out.println(word + "\t" + match);
-	
-							resultTaggerTag.add(match);
-							lastMatch = i;
-							break;
-	
-						} else {
-	
-							// System.out.println(word + "\tO");
-							if (word.equals("") ||word.equals(" ")|| word.matches("###MEDLINE:\\d+")){
-								resultTagger.add(word);
-								resultTaggerTag.add("O");
-							}else{
-								resultTagger.add(word + "\tO"+"\n");
-								resultTaggerTag.add("O");
-							}
-							
-						}
+			int ctr = 0;
+			for (int i = 0; i < te.length; i++) {
+				boolean foundMatch = false;
+				for (Chunk chunk : chunking.chunkSet()) {
+					if (chunk.start() == ctr){
+						bw.write(te[i] + "\t" + chunk.type() + "\n");
+						foundMatch=true;
+						break;
 					}
 				}
-				if (reachedLastElement){
-					break;
+				if (!foundMatch){
+					if (!(te[i].equals("") || te[i].equals(" "))){
+						bw.write(te[i]+ "\tO\n");
+					}
+					
 				}
+				ctr = ctr + te[i].length() + 1;
 			}
+			
 		}
 
 	}
@@ -302,12 +280,12 @@ public class GeneMatcher {
 
 	}
 
-	public void chunkContent(Content content) {
+	public void chunkContent(Content content, BufferedWriter bw) throws IOException {
 		resultTagger = new ArrayList<String>();
 		res = new ArrayList<String>();
 		ArrayList<String> sententces = content.getSentences();
 		for (String line : sententces) {
-			this.chunk(line);
+			this.chunk(line, bw);
 		}
 	}
 

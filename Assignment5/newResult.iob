@@ -9,18 +9,18 @@ proinflammatory	B-protein
 cytokine	I-protein
 (	O
 tumor	B-protein
-necrosis	O
+necrosis	I-protein
 factor-alpha	O
 ,	O
-interleukin-6	O
+interleukin-6	B-protein
 ,	O
 and	O
-interferon-gamma	O
+interferon-gamma	B-protein
 )	O
 release	O
 from	O
-activated	O
-peripheral	O
+activated	B-cell_type
+peripheral	I-cell_type
 blood	O
 mononuclear	O
 cells	O
@@ -107,6 +107,13 @@ infection	O
 suggesting	O
 that	O
 GH	B-protein
+may	O
+have	O
+altered	O
+the	O
+immune	O
+response	O
+.	O
 
 The	O
 GH	B-protein
@@ -118,11 +125,11 @@ both	O
 expressed	O
 in	O
 peripheral	B-cell_type
-blood	O
+blood	I-cell_type
 mononuclear	O
 cells	O
 (	O
-PBMCs	O
+PBMCs	B-cell_type
 )	O
 ;	O
 thus	O
@@ -136,8 +143,8 @@ an	O
 endocrine	O
 or	O
 an	O
-autocrine	O
-modulator	O
+autocrine	B-protein
+modulator	I-protein
 of	O
 the	O
 immune	O
@@ -157,6 +164,14 @@ may	O
 induce	O
 proinflammatory	O
 cytokines	B-protein
+,	O
+which	O
+are	O
+implicated	O
+in	O
+septic	O
+shock	O
+.	O
 
 To	O
 do	O
@@ -167,6 +182,43 @@ cytokine	O
 production	O
 by	O
 PBMCs	B-cell_type
+incubated	O
+in	O
+conditions	O
+that	O
+simulated	O
+high-dose	O
+GH	O
+therapy	O
+,	O
+and	O
+we	O
+measured	O
+cytokine	O
+levels	O
+in	O
+patients	O
+undergoing	O
+laparoscopic	O
+cholecystectomy	O
+who	O
+were	O
+randomized	O
+to	O
+receive	O
+either	O
+high-dose	O
+GH	O
+therapy	O
+(	O
+13	O
+IU/m2	O
+x	O
+day	O
+)	O
+or	O
+placebo	O
+.	O
 
 To	O
 confirm	O
@@ -184,6 +236,9 @@ we	O
 used	O
 a	O
 Stat5	B-protein
+functional	O
+assay	O
+.	O
 
 In	O
 this	O
@@ -216,12 +271,71 @@ were	O
 incubated	O
 with	O
 GH	B-DNA
+in	O
+doses	O
+from	O
+1-1	O
+,	O
+000	O
+ng/mL	O
+for	O
+6-72	O
+h	O
+under	O
+resting	O
+conditions	O
+and	O
+after	O
+activation	O
+with	O
+endotoxin	O
+and	O
+the	O
+mixed	O
+lymphocyte	O
+reaction	O
+.	O
 
 Studies	O
 were	O
 repeated	O
 with	O
 PBMCs	B-cell_type
+from	O
+six	O
+individuals	O
+using	O
+a	O
+GH	O
+dose	O
+of	O
+100	O
+ng/mL	O
+(	O
+the	O
+level	O
+of	O
+GH	O
+found	O
+after	O
+high-dose	O
+GH	O
+therapy	O
+)	O
+and	O
+an	O
+endotoxin	O
+dose	O
+that	O
+gave	O
+a	O
+submaximal	O
+response	O
+(	O
+0.01	O
+ng/mL	O
+)	O
+.	O
 
 GH	O
 had	O
@@ -235,21 +349,21 @@ the	O
 production	O
 of	O
 tumor	B-protein
-necrosis	O
+necrosis	I-protein
 factor-alpha	O
 (	O
-TNFalpha	O
+TNFalpha	B-protein
 )	O
 ,	O
-interleukin-6	O
+interleukin-6	B-protein
 (	O
-IL-6	O
+IL-6	B-protein
 )	O
 ,	O
 or	O
-interferon-gamma	O
+interferon-gamma	B-protein
 (	O
-IFNgamma	O
+IFNgamma	B-protein
 )	O
 .	O
 
@@ -281,6 +395,25 @@ a	O
 fall	O
 in	O
 TNFalpha	B-protein
+at	O
+24	O
+h	O
+after	O
+surgery	O
+;	O
+however	O
+,	O
+high-dose	O
+GH	O
+therapy	O
+had	O
+no	O
+effect	O
+on	O
+the	O
+cytokine	O
+response	O
+.	O
 
 We	O
 considered	O
@@ -330,6 +463,18 @@ IFNgamma	B-protein
 production	O
 by	O
 PBMCs	B-cell_type
+in	O
+either	O
+the	O
+mixed	O
+lymphocyte	O
+reaction	O
+or	O
+when	O
+activated	O
+by	O
+endotoxin	O
+.	O
 
 These	O
 results	O
@@ -392,15 +537,15 @@ modulation	O
 Interaction	O
 between	O
 interferon	B-protein
-consensus	O
+consensus	I-protein
 sequence-binding	O
 protein	O
 and	O
-COP9/signalosome	O
-subunit	O
+COP9/signalosome	B-protein
+subunit	I-protein
 CSN2	O
 (	O
-Trip15	O
+Trip15	B-protein
 )	O
 .	O
 
@@ -409,31 +554,31 @@ possible	O
 link	O
 between	O
 interferon	B-protein
-regulatory	O
+regulatory	I-protein
 factor	O
 signaling	O
 and	O
 the	O
-COP9/signalosome	O
+COP9/signalosome	B-DNA
 .	O
 
 Interferon	O
 consensus	B-protein
-sequence-binding	O
+sequence-binding	I-protein
 protein	O
 (	O
-ICSBP	O
+ICSBP	B-protein
 )	O
 is	O
 a	O
 member	O
 of	O
 the	O
-interferon	O
-regulatory	O
+interferon	B-protein
+regulatory	I-protein
 factors	O
 (	O
-IRF	O
+IRF	B-protein
 )	O
 that	O
 has	O
@@ -454,8 +599,8 @@ promoting	O
 the	O
 differentiation	O
 of	O
-myeloid	O
-cells	O
+myeloid	B-cell_type
+cells	I-cell_type
 .	O
 
 ICSBP	O
@@ -478,9 +623,9 @@ to	O
 a	O
 variety	O
 of	O
-promoters	O
+promoters	B-DNA
 containing	O
-DNA	O
+DNA	I-DNA
 composite	O
 elements	O
 .	O
@@ -493,12 +638,12 @@ through	O
 a	O
 specific	O
 COOH-terminal	B-protein
-domain	O
+domain	I-protein
 termed	O
 IAD	O
 (	O
-IRF	O
-association	O
+IRF	B-protein
+association	I-protein
 domain	O
 )	O
 .	O
@@ -531,9 +676,9 @@ a	O
 bait	O
 against	O
 a	O
-B-cell	O
+B-cell	B-cell_line
 cDNA	O
-library	O
+library	I-cell_line
 .	O
 
 Trip15	O
@@ -542,13 +687,13 @@ identified	O
 as	O
 a	O
 specific	B-protein
-interacting	O
+interacting	I-protein
 factor	O
 with	O
-ICSBP	O
+ICSBP	B-protein
 in	O
-yeast	O
-cells	O
+yeast	B-cell_type
+cells	I-cell_type
 ,	O
 which	O
 was	O
@@ -566,8 +711,8 @@ by	O
 coimmunoprecipitation	O
 studies	O
 in	O
-COS7	O
-cells	O
+COS7	B-cell_line
+cells	I-cell_line
 .	O
 
 Trip15	O
@@ -580,7 +725,7 @@ component	O
 of	O
 the	O
 COP9/signalosome	B-protein
-(	O
+(	I-protein
 CSN	O
 )	O
 complex	O
@@ -593,7 +738,7 @@ subunits	O
 and	O
 thus	O
 termed	O
-CSN2	O
+CSN2	B-cell_line
 .	O
 
 This	O
@@ -655,6 +800,7 @@ residue	O
 within	O
 its	O
 IAD	B-protein
+.	O
 
 The	O
 phosphorylated	O
@@ -677,6 +823,7 @@ ICSBP	B-protein
 exerted	O
 on	O
 IRF-1	B-protein
+.	O
 
 This	O
 suggests	O
@@ -697,6 +844,7 @@ transcriptional	O
 activity	O
 of	O
 ICSBP	B-protein
+.	O
 
 ###MEDLINE:20434840
 
@@ -743,14 +891,52 @@ Glucocorticoid	O
 receptor	O
 (	O
 GR	B-protein
+)	O
+-deficient	O
+mice	O
+were	O
+used	O
+to	O
+directly	O
+investigate	O
+this	O
+problem	O
+.	O
 
 GR-deficient	O
 thymocytes	B-cell_type
+were	O
+resistant	O
+to	O
+dexamethasone-mediated	O
+apoptosis	O
+,	O
+confirming	O
+the	O
+absence	O
+of	O
+glucocorticoid	O
+responsiveness	O
+.	O
 
 An	O
 absence	O
 of	O
 GR	B-protein
+signaling	O
+had	O
+no	O
+impact	O
+on	O
+thymocyte	O
+development	O
+either	O
+in	O
+vivo	O
+or	O
+in	O
+vitro	O
+.	O
 
 T	O
 cell	O
@@ -768,7 +954,7 @@ by	O
 normal	O
 development	O
 of	O
-CD4+CD8+	O
+CD4+CD8+	B-cell_type
 ,	O
 alphabetaTCR+CD4+	O
 ,	O
@@ -802,6 +988,8 @@ the	O
 absence	O
 of	O
 GR	B-protein
+signaling	O
+.	O
 
 In	O
 contrast	O
@@ -814,6 +1002,18 @@ data	O
 demonstrate	O
 that	O
 GR	B-protein
+signaling	O
+is	O
+not	O
+essential	O
+for	O
+intrathymic	O
+T	O
+cell	O
+development	O
+or	O
+selection	O
+.	O
 
 ###MEDLINE:20430060
 
@@ -828,15 +1028,18 @@ of	O
 antigen-specific	O
 IgE	B-protein
 antibodies	I-protein
+in	O
+vitro	O
+.	O
 
 BACKGROUND	O
 :	O
-Type	O
+Type	B-cell_type
 2	O
-T-helper	O
+T-helper	I-cell_type
 cells	O
 (	O
-Th2	O
+Th2	B-cell_type
 )	O
 are	O
 involved	O
@@ -849,7 +1052,7 @@ humoral	O
 immune	O
 response	O
 against	O
-antigens	O
+antigens	B-protein
 and	O
 allergens	O
 and	O
@@ -868,6 +1071,15 @@ that	O
 regulates	O
 antigen-specific	O
 IgE	B-protein
+secretion	O
+and	O
+immune	O
+deviation	O
+is	O
+still	O
+not	O
+known	O
+.	O
 
 OBJECTIVES	O
 :	O
@@ -896,17 +1108,17 @@ status	O
 of	O
 the	O
 transcription	B-protein
-factor	O
+factor	I-protein
 NFkappaB	O
 .	O
 
 METHODS	O
 :	O
 Peripheral	B-cell_type
-blood	O
+blood	I-cell_type
 lymphocytes	O
 (	O
-PBMC	O
+PBMC	B-cell_type
 )	O
 from	O
 seronegative	O
@@ -922,7 +1134,7 @@ consisting	O
 of	O
 both	O
 a	O
-T-cell	O
+T-cell	B-cell_type
 and	O
 a	O
 B-cell	O
@@ -948,7 +1160,7 @@ T-helper	B-cell_type
 cells	I-cell_type
 secreted	O
 type	B-DNA
-2	O
+2	I-DNA
 cytokines	O
 .	O
 
@@ -982,6 +1194,8 @@ for	O
 the	O
 specific	O
 IgE	B-protein
+secretion	O
+.	O
 
 Analysis	O
 of	O
@@ -989,7 +1203,7 @@ NFkappaB	B-protein
 activation	O
 in	O
 B	B-cell_type
-and	O
+and	I-cell_type
 T	O
 cells	O
 during	O
@@ -999,14 +1213,14 @@ secondary	O
 immunization	O
 showed	O
 that	O
-NFkappaB	O
+NFkappaB	B-cell_type
 could	O
 be	O
 detected	O
 in	O
 both	O
-B	O
-and	O
+B	B-cell_type
+and	I-cell_type
 T	O
 cells	O
 during	O
@@ -1018,7 +1232,7 @@ was	O
 dependent	O
 on	O
 exogenous	O
-IL-4	O
+IL-4	B-protein
 in	O
 the	O
 secondary	O
@@ -1040,18 +1254,18 @@ in	O
 vitro	O
 using	O
 naive	B-cell_type
-B	O
+B	I-cell_type
 cells	O
 ,	O
 demonstrating	O
 the	O
 involvement	O
 of	O
-T-helper	O
-cell	O
+T-helper	B-cell_type
+cell	I-cell_type
 phenotype	O
 and	O
-NFkappaB	O
+NFkappaB	B-protein
 and	O
 demonstrates	O
 the	O
@@ -1067,8 +1281,8 @@ effect	O
 of	O
 antigens	O
 on	O
-human	O
-immunocytes	O
+human	B-cell_type
+immunocytes	I-cell_type
 .	O
 
 ###MEDLINE:20420778
@@ -1085,6 +1299,20 @@ and	O
 nuclear	B-protein
 factor	I-protein
 kB	B-protein
+activation	O
+in	O
+the	O
+lung	O
+after	O
+sensitization	O
+and	O
+allergen	O
+challenge	O
+in	O
+brown	O
+Norway	O
+rats	O
+.	O
 
 BACKGROUND	O
 :	O
@@ -1099,12 +1327,12 @@ of	O
 Th-1	B-protein
 and	O
 Th-2	B-RNA
-related	O
+related	I-RNA
 cytokine	O
 mRNA	O
 and	O
-nuclear	O
-factor	O
+nuclear	B-protein
+factor	I-protein
 (	O
 NF	O
 )	O
@@ -1123,7 +1351,7 @@ brown	O
 Norway	O
 rats	O
 (	O
-BNR	O
+BNR	B-protein
 )	O
 .	O
 
@@ -1142,6 +1370,9 @@ and	O
 eosinophils	B-cell_type
 with	O
 cytokine	B-protein
+mRNA	O
+expression	O
+.	O
 
 METHODS	O
 :	O
@@ -1161,12 +1392,39 @@ OA	O
 (	O
 group	B-protein
 I	I-protein
+)	O
+with	O
+a	O
+1-week	O
+interval	O
+between	O
+and	O
+then	O
+provoked	O
+with	O
+OA	O
+1	O
+week	O
+later	O
+.	O
 
 Pulmonary	O
 function	O
 tests	O
 (	O
 PFT	B-protein
+)	O
+were	O
+performed	O
+at	O
+baseline	O
+and	O
+24	O
+h	O
+after	O
+acetylcholine	O
+challenge	O
+.	O
 
 Eight	O
 weight-matched	O
@@ -1178,6 +1436,8 @@ controls	O
 (	O
 group	B-protein
 II	I-protein
+)	O
+.	O
 
 All	O
 animals	O
@@ -1226,6 +1486,43 @@ acetylcholine	O
 injections	O
 ,	O
 PFTs	B-cell_type
+were	O
+performed	O
+,	O
+including	O
+a	O
+maximal	O
+forced	O
+expiratory	O
+maneuver	O
+(	O
+MFEM	O
+)	O
+,	O
+airway	O
+opening	O
+pressure	O
+(	O
+P	O
+(	O
+ao	O
+)	O
+)	O
+at	O
+tidal	O
+breathing	O
+and	O
+total	O
+dynamic	O
+lung	O
+compliance	O
+(	O
+C	O
+(	O
+dyn	O
+)	O
+)	O
+.	O
 
 Bronchoalveolar	O
 lavage	O
@@ -1289,6 +1586,7 @@ IFNr	B-protein
 )	O
 and	O
 beta-actine	B-protein
+.	O
 
 RESULTS	O
 :	O
@@ -1303,6 +1601,13 @@ airway	O
 obstruction	O
 on	O
 PFTs	B-cell_type
+and	O
+airway	O
+inflammation	O
+on	O
+histological	O
+examination	O
+.	O
 
 Ratios	O
 of	O
@@ -1323,10 +1628,34 @@ mRNA	O
 levels	O
 to	O
 beta-actine	B-protein
+as	O
+measured	O
+by	O
+densitometry	O
+were	O
+significantly	O
+lower	O
+in	O
+controls	O
+than	O
+in	O
+OA-sensitized	O
+rats	O
+.	O
 
 The	O
 IFNr	B-protein
 mRNA	I-protein
+to	O
+beta-actin	O
+ratio	O
+was	O
+significantly	O
+reduced	O
+in	O
+OA-sensitized	O
+rats	O
+.	O
 
 Group	O
 I	O
@@ -1355,25 +1684,26 @@ of	O
 this	O
 transcription	B-protein
 factor	I-protein
+.	O
 
 CONCLUSION	O
 :	O
 Th-2	B-RNA
-related	O
+related	I-RNA
 cytokine	O
 mRNA	O
 was	O
 increased	O
 but	O
-Th-1	O
-related	O
+Th-1	B-RNA
+related	I-RNA
 cytokine	O
 mRNA	O
 was	O
 decreased	O
 in	O
 OA-sensitized	O
-BNR	O
+BNR	B-protein
 .	O
 
 An	O
@@ -1381,7 +1711,7 @@ increased	O
 level	O
 of	O
 Th-2	B-RNA
-related	O
+related	I-RNA
 cytokine	O
 mRNA	O
 correlated	O
@@ -1427,7 +1757,7 @@ novel	O
 class	O
 of	O
 NFAT	B-protein
-transcription	O
+transcription	I-protein
 factor	O
 regulator	O
 .	O
@@ -1453,6 +1783,8 @@ novel	O
 inhibitor	O
 of	O
 cytokine	B-protein
+production	O
+.	O
 
 Identified	O
 initially	O
@@ -1464,6 +1796,29 @@ synthesis	O
 ,	O
 the	O
 BTPs	B-protein
+have	O
+been	O
+optimized	O
+in	O
+this	O
+regard	O
+and	O
+even	O
+inhibit	O
+IL-2	O
+production	O
+with	O
+a	O
+10-fold	O
+enhancement	O
+over	O
+cyclosporine	O
+in	O
+an	O
+ex	O
+vivo	O
+assay	O
+.	O
 
 Additionally	O
 ,	O
@@ -1477,6 +1832,11 @@ IL-4	B-protein
 IL-5	B-protein
 ,	O
 IL-8	B-protein
+,	O
+and	O
+eotaxin	O
+production	O
+.	O
 
 Unlike	O
 the	O
@@ -1484,11 +1844,11 @@ IL-2	B-protein
 inhibitors	I-protein
 ,	O
 cyclosporine	B-protein
-and	O
+and	I-protein
 FK506	O
 ,	O
 the	O
-BTPs	O
+BTPs	B-protein
 do	O
 not	O
 directly	O
@@ -1496,9 +1856,9 @@ inhibit	O
 the	O
 dephosphorylation	O
 of	O
-NFAT	O
+NFAT	B-protein
 by	O
-calcineurin	O
+calcineurin	B-protein
 .	O
 
 ###MEDLINE:20406551
@@ -1517,7 +1877,7 @@ type	O
 1	O
 in	O
 primary	B-cell_type
-T	O
+T	I-cell_type
 cells	O
 .	O
 
@@ -1546,7 +1906,7 @@ it	O
 appears	O
 that	O
 primary	B-cell_type
-T	O
+T	I-cell_type
 lymphocytes	O
 ,	O
 in	O
@@ -1575,6 +1935,9 @@ when	O
 the	O
 host	O
 lymphocyte	B-cell_type
+is	O
+activated	O
+.	O
 
 These	O
 observations	O
@@ -1589,7 +1952,7 @@ of	O
 HIV-1	O
 in	O
 resting	B-cell_type
-or	O
+or	I-cell_type
 activated	O
 T	O
 cells	O
@@ -1638,7 +2001,7 @@ cord	O
 blood	O
 or	O
 adult	B-cell_type
-peripheral	O
+peripheral	I-cell_type
 blood	O
 T	O
 lymphocytes	O
@@ -1647,8 +2010,8 @@ and	O
 transfection	O
 experiments	O
 in	O
-primary	O
-T	O
+primary	B-cell_type
+T	I-cell_type
 cells	O
 .	O
 
@@ -1661,23 +2024,23 @@ transcription	O
 from	O
 the	O
 HIV-1	B-DNA
-long	O
+long	I-DNA
 terminal	O
 repeat	O
 is	O
 repressed	O
 in	O
 resting	O
-naive	O
-T	O
+naive	B-cell_type
+T	I-cell_type
 lymphocytes	O
 ;	O
 whereas	O
 ,	O
 mitogenically	O
 stimulated	O
-CD4+	O
-cells	O
+CD4+	B-cell_type
+cells	I-cell_type
 form	O
 an	O
 activator	O
@@ -1694,7 +2057,7 @@ act	O
 through	O
 a	O
 repressor-activator	B-DNA
-target	O
+target	I-DNA
 sequence	O
 (	O
 RATS	O
@@ -1705,29 +2068,29 @@ shares	O
 homology	O
 with	O
 the	O
-interleukin-2	O
+interleukin-2	B-protein
 (	O
-IL-2	O
+IL-2	B-protein
 )	O
 purine-rich	O
-response	O
-element	O
+response	B-DNA
+element	I-DNA
 ,	O
 through	O
 the	O
-adjacent	O
-binding	O
+adjacent	B-DNA
+binding	I-DNA
 site	O
 of	O
 the	O
-nuclear	O
-factor	O
+nuclear	B-protein
+factor	I-protein
 of	O
 activated	O
 T	O
 cells	O
 (	O
-NFAT	O
+NFAT	B-protein
 )	O
 ,	O
 and	O
@@ -1735,8 +2098,8 @@ weakly	O
 ,	O
 through	O
 the	O
-KB	O
-region	O
+KB	B-DNA
+region	I-DNA
 .	O
 
 CONCLUSIONS	O
@@ -1759,7 +2122,7 @@ HIV-1	O
 expression	O
 in	O
 primary	B-cell_type
-CD4+	O
+CD4+	I-cell_type
 cells	O
 .	O
 
@@ -1768,7 +2131,7 @@ repression	O
 in	O
 resting	O
 naive	B-cell_type
-T	O
+T	I-cell_type
 helper	O
 cells	O
 may	O
@@ -1789,8 +2152,8 @@ viral	O
 production	O
 in	O
 activated	O
-T	O
-lymphocytes	O
+T	B-cell_type
+lymphocytes	I-cell_type
 .	O
 
 ###MEDLINE:20405655
@@ -1798,14 +2161,14 @@ lymphocytes	O
 Involvement	O
 of	O
 lipopolysaccharide	B-protein
-binding	O
+binding	I-protein
 protein	O
 ,	O
-CD14	O
+CD14	B-protein
 ,	O
 and	O
-Toll-like	O
-receptors	O
+Toll-like	B-protein
+receptors	I-protein
 in	O
 the	O
 initiation	O
@@ -1848,6 +2211,11 @@ synthesis	O
 in	O
 human	B-cell_type
 monocytes	I-cell_type
+increasing	O
+with	O
+culture	O
+time	O
+.	O
 
 This	O
 activity	O
@@ -1867,18 +2235,18 @@ receptor	O
 using	O
 the	O
 My	B-protein
-4	O
+4	I-protein
 mAb	O
 and	O
 by	O
-polymyxin	O
-B	O
+polymyxin	B-protein
+B	I-protein
 .	O
 
 In	O
 the	O
 murine	B-cell_line
-macrophage	O
+macrophage	I-cell_line
 cell	O
 line	O
 RAW	O
@@ -1888,15 +2256,15 @@ Treponema	O
 culture	O
 supernatants	O
 induced	O
-TNF-alpha	O
+TNF-alpha	B-protein
 secretion	O
 in	O
 a	O
-LPS	O
-binding	O
+LPS	B-protein
+binding	I-protein
 protein	O
 (	O
-LBP	O
+LBP	B-protein
 )	O
 -dependent	O
 fashion	O
@@ -1962,7 +2330,7 @@ polymyxin	B-protein
 B	I-protein
 and	O
 endotoxin	B-protein
-neutralizing	O
+neutralizing	I-protein
 protein	O
 .	O
 
@@ -1994,6 +2362,10 @@ the	O
 role	O
 of	O
 TLRs	B-protein
+in	O
+cell	O
+activation	O
+.	O
 
 Furthermore	O
 ,	O
@@ -2005,9 +2377,9 @@ Chinese	I-cell_line
 hamster	O
 ovary	O
 (	O
-CHO	O
+CHO	B-cell_line
 )	O
-cells	O
+cells	I-cell_line
 was	O
 studied	O
 .	O
@@ -2026,10 +2398,10 @@ differently	O
 with	O
 T.	O
 brennaborense-stimulating	O
-cells	O
+cells	I-cell_type
 in	O
 a	O
-TLR-4-dependent	O
+TLR-4-dependent	B-protein
 fashion	O
 ,	O
 while	O
@@ -2038,7 +2410,7 @@ maltophilum-mediated	O
 activation	O
 apparently	O
 involved	O
-TLR-2	O
+TLR-2	B-protein
 .	O
 
 These	O
@@ -2064,6 +2436,7 @@ CD14	B-protein
 ,	O
 and	O
 TLRs	B-protein
+.	O
 
 ###MEDLINE:20402338
 
@@ -2077,15 +2450,19 @@ by	O
 the	O
 coactivator	O
 p300	B-protein
+during	O
+T-cell	O
+apoptosis	O
+.	O
 
 T-cell	O
-antigen	O
+antigen	I-protein
 receptor	O
 (	O
-TCR	O
+TCR	B-protein
 )	O
 -induced	O
-thymocyte	O
+thymocyte	B-cell_type
 apoptosis	O
 is	O
 mediated	O
@@ -2103,8 +2480,8 @@ of	O
 members	O
 of	O
 the	O
-Nur77	O
-family	O
+Nur77	B-protein
+family	I-protein
 .	O
 
 The	O
@@ -2122,10 +2499,10 @@ binding	O
 sites	O
 for	O
 myocyte	B-protein
-enhancer	O
+enhancer	I-protein
 factor-2	O
 (	O
-MEF2	O
+MEF2	B-protein
 )	O
 .	O
 
@@ -2135,17 +2512,17 @@ been	O
 shown	O
 that	O
 nuclear	B-protein
-factor	O
+factor	I-protein
 of	O
 activated	O
 T	O
 cells	O
 (	O
-NFAT	O
+NFAT	B-protein
 )	O
 interacts	O
 with	O
-MEF2D	O
+MEF2D	B-DNA
 and	O
 enhances	O
 its	O
@@ -2161,7 +2538,7 @@ activation	O
 of	O
 MEF2D	O
 by	O
-calcineurin	O
+calcineurin	B-protein
 .	O
 
 We	O
@@ -2177,6 +2554,12 @@ recruit	O
 the	O
 coactivator	O
 p300	B-protein
+for	O
+the	O
+transcription	O
+of	O
+Nur77	O
+.	O
 
 Surprisingly	O
 ,	O
@@ -2199,6 +2582,13 @@ activity	O
 suggesting	O
 that	O
 NFATp	B-protein
+acts	O
+as	O
+a	O
+coactivator	O
+for	O
+MEF2D	O
+.	O
 
 Transient	O
 co-expression	O
@@ -2225,7 +2615,7 @@ induction	O
 of	O
 the	O
 endogenous	B-DNA
-Nur77	O
+Nur77	I-DNA
 gene	O
 .	O
 
@@ -2263,6 +2653,7 @@ with	O
 other	O
 transcription	B-protein
 factors	I-protein
+.	O
 
 ###MEDLINE:20400243
 
@@ -2289,6 +2680,13 @@ via	O
 the	O
 TNF-alpha	B-protein
 receptor	I-protein
+at	O
+the	O
+time	O
+of	O
+antigen	O
+uptake	O
+.	O
 
 In	O
 this	O
@@ -2298,15 +2696,15 @@ show	O
 that	O
 the	O
 retinal	B-protein
-autoantigen	O
+autoantigen	I-protein
 ,	O
 S-antigen	O
 ,	O
 contains	O
 a	O
 functional	O
-TNF-alpha	O
-homologous	O
+TNF-alpha	B-protein
+homologous	I-protein
 domain	O
 which	O
 stimulates	O
@@ -2314,19 +2712,19 @@ maturation	O
 and	O
 differentiation	O
 of	O
-cultured	O
-dendritic	O
+cultured	B-cell_line
+dendritic	I-cell_line
 cells	O
 (	O
-DC	O
+DC	B-cell_type
 )	O
 or	O
 tissue	O
 DC	O
 via	O
 the	O
-p55	O
-TNF-alpha	O
+p55	B-protein
+TNF-alpha	I-protein
 receptor	O
 .	O
 
@@ -2351,7 +2749,7 @@ stimulated	O
 accumulation	O
 of	O
 cell	B-protein
-surface	O
+surface	I-protein
 MHC	O
 class	O
 II	O
@@ -2367,8 +2765,8 @@ vesicles	O
 ,	O
 and	O
 induced	O
-IL-1beta	O
-and	O
+IL-1beta	B-RNA
+and	I-RNA
 IL-12	O
 mRNA	O
 expression	O
@@ -2376,7 +2774,7 @@ in	O
 cultured	O
 bone	O
 marrow-derived	O
-DC	O
+DC	B-cell_type
 .	O
 
 In	O
@@ -2399,7 +2797,7 @@ of	O
 other	O
 ,	O
 exogenous	B-protein
-cytokine	O
+cytokine	I-protein
 sources	O
 .	O
 
@@ -2415,11 +2813,11 @@ retinal	O
 autoantigen	O
 ,	O
 interphotoreceptor	B-protein
-retinoid	O
+retinoid	I-protein
 binding	O
 protein	O
 (	O
-IRBP	O
+IRBP	B-protein
 )	O
 ,	O
 were	O
@@ -2427,8 +2825,8 @@ able	O
 to	O
 stimulate	O
 naive	O
-T	O
-cell	O
+T	B-cell_type
+cell	I-cell_type
 proliferation	O
 in	O
 vitro	O
@@ -2457,9 +2855,9 @@ switching	O
 In	O
 contrast	O
 ,	O
-IRBP	O
+IRBP	B-protein
 -pulsed	O
-DC	O
+DC	I-protein
 had	O
 no	O
 detectable	O
@@ -2468,8 +2866,8 @@ vivo	O
 priming	O
 effect	O
 and	O
-IgG	O
-antibody	O
+IgG	B-protein
+antibody	I-protein
 levels	O
 remained	O
 suppressed	O
@@ -2477,7 +2875,7 @@ even	O
 after	O
 immunization	O
 with	O
-IRBP	O
+IRBP	B-protein
 in	O
 complete	O
 Freund	O
@@ -2507,3 +2905,19 @@ response	O
 to	O
 self	B-protein
 antigen	I-protein
+in	O
+vivo	O
+,	O
+the	O
+outcome	O
+being	O
+dependent	O
+upon	O
+DC	O
+activation	O
+at	O
+the	O
+time	O
+of	O
+antigen	O
+uptake	O

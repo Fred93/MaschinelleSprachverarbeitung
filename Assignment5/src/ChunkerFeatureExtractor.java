@@ -41,8 +41,8 @@ public class ChunkerFeatureExtractor
         @SuppressWarnings("unchecked") // req for deserialize
         CodeSource src = this.getClass().getProtectionDomain().getCodeSource();
 		String loc = src.getLocation().toString();
-		//File hmmFile = new File(loc.substring(5, loc.length()-10) + "/objects/pos-en-general-brown.HiddenMarkovModel");
-		File hmmFile = new File("C:/Users/D059348/dev/HU/MaschinelleSprachverarbeitung/objects/pos-en-general-brown.HiddenMarkovModel");
+		File hmmFile = new File(loc.substring(5, loc.length()-10) + "/objects/pos-en-general-brown.HiddenMarkovModel");
+		//File hmmFile = new File("C:/Users/D059348/dev/HU/MaschinelleSprachverarbeitung/objects/pos-en-general-brown.HiddenMarkovModel");
         HiddenMarkovModel posHmm
             = (HiddenMarkovModel)
             AbstractExternalizable
